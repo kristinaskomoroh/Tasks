@@ -1,0 +1,162 @@
+import { LightningElement } from 'lwc'; 
+import getProducts from '@salesforce/apex/ProductTableController.getProducts'; 
+import createProduct from '@salesforce/apex/ProductTableController.createProduct';
+import deleteProduct from '@salesforce/apex/ProductTableController.deleteProduct';
+import updateProduct from '@salesforce/apex/ProductTableController.updateProduct';
+
+
+
+export default class ProductTable extends LightningElement {
+   products = [];
+
+   isModalOpen = false;
+   isDeleteModalOpen = false;
+    isEditModalOpen = false;
+    isLoading = false;
+    
+    searchText = '';
+    searchTimeout;
+
+    pagedProducts = [];
+    newProduct = {};
+    editProduct = {};
+    productIdToDelete = null;
+    
+
+    pageSize = 5;
+    currentPage = 1;
+    totalPages = 1;
+
+    get isFirstPage() {
+        return this.currentPage === 1;
+    }
+
+    get isLastPage() {
+        return this.currentPage === this.totalPages;
+    }
+    
+
+    async connectedCallback() {
+        this.isLoading = true;
+        await this.loadProducts(this.searchText);
+        this.isLoading = false;
+    }
+
+    openModal() {
+        this.newProduct = {};
+        this.isModalOpen = true; 
+    }
+
+    closeModal() {
+        this.isModalOpen = false;
+    }
+
+    openDeleteModal(event) {
+        this.productIdToDelete = event.currentTarget.dataset.id;
+        this.isDeleteModalOpen = true;
+    }
+
+    canselDelete(){
+        this.isDeleteModalOpen = false;
+        this.productIdToDelete = null;
+    }
+
+    openEditModal(event) {
+        const id = event.currentTarget.dataset.id;
+        this.editProduct = { ...this.products.find(p => p.Id === id) };
+        this.isEditModalOpen = true;
+    }
+
+    closeEditModal() {
+        this.isEditModalOpen = false;
+    }
+
+
+    handleInputChange(event) {
+        this.newProduct[event.target.dataset.field] = event.target.value; 
+    }
+
+    handleEditInputChange(event) {
+        this.editProduct[event.target.dataset.field] = event.target.value;
+    }
+
+    handleSearch(event) {
+        this.searchText = event.target.value; 
+        clearTimeout(this.searchTimeout);
+
+        this.searchTimeout = setTimeout(async () => {
+        await this.loadProducts(this.searchText);
+    }, 300);
+}
+
+    validateForm(){
+        let isValid = true;
+        const inputs = this.template.querySelectorAll('lightning-input');
+
+        inputs.forEach(input => {
+            input.reportValidity();
+
+    
+            if (input.required && !input.value) {
+                isValid = false;
+            }
+
+            
+    if ((input.dataset.field === 'UnitPrice__c' && input.dataset.field === 'UnitsAvailable__c') &&
+                (input.value === '' || Number(input.value) <= 0)) {
+                input.setCustomValidity('Value must be greater than 0');
+                isValid = false;
+            }  
+        });
+        return isValid;
+    }
+
+    async confirmDelete() {
+        if (!this.productIdToDelete) return;
+            this.products = await deleteProduct({ productId: this.productIdToDelete });
+            this.updatePagedProducts();
+            this.canselDelete();
+    }
+
+    async EditProduct() {
+        if (!this.validateForm()) return;
+            this.products = await updateProduct({ product: this.editProduct });
+            this.updatePagedProducts();
+            this.closeEditModal();
+    }
+
+    async saveProduct() {
+        if (!this.validateForm()) return;
+            this.products = await createProduct({ product: this.newProduct });
+            this.updatePagedProducts();
+            this.closeModal();
+    }
+
+    async loadProducts(searchText) {
+        this.products = await getProducts({ searchText });
+        this.totalPages = Math.ceil(this.products.length / this.pageSize);
+        this.currentPage = 1;
+        this.updatePagedProducts();
+}
+
+    updatePagedProducts() {
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        this.pagedProducts = [...this.products.slice(startIndex, endIndex)];
+    }
+
+    nextPage() {
+        if (!this.isLastPage) {
+            this.currentPage++;
+            this.updatePagedProducts();
+        }
+    }
+
+    prevPage() {
+        if (!this.isFirstPage) {
+            this.currentPage--;
+            this.updatePagedProducts();
+        }
+    }
+
+}
