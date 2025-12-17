@@ -4,8 +4,6 @@ public with sharing class AccountSwitcherImplTest {
     public static void getAndSortTest(){
         List<Contact> privateContacts = TestFactory.createPrivateContact();
         List<Contact> publicContacts = TestFactory.createPublicContact();
-        List<Account> acc = [SELECT Id FROM Account WHERE Name = 'Private Account'];
-        Account acc1 = acc[0];
         
         AccountSwitcherImpl switcher = new AccountSwitcherImpl();
         Test.startTest();
