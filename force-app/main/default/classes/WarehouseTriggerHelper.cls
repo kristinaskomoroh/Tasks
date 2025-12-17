@@ -21,4 +21,3 @@ public with sharing class WarehouseTriggerHelper {
           update warehousesNew;
     }
 }
-   
