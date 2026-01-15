@@ -1,0 +1,139 @@
+<template>
+    <div class="slds-grid slds-grid_align-center">
+        <div class="border">
+    
+            <div class="slds-col">
+                <h1 style="font-size:50px; font-family:Georgia; font-weight:bold; margin-right: 50px; margin-left: 100px; ">Marketplace</h1>
+            </div>
+        
+            <div class="slds-col">
+                <lightning-input type="search" name="text" class="custom-search" placeholder="Enter the name" variant="label-hidden"></lightning-input>
+            </div>
+
+            <div class="slds-col">
+                <div class="cart-container">
+                    <lightning-button variant="brand" label="Cart" icon-name="utility:cart"></lightning-button>
+                        <div class="cart-badge">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+    <div class="slds-grid slds-grid_align-center" style="display: inline-grid;">
+    <input type="checkbox" id="menu-toggle" class="menu-checkbox" style="display: none;">
+
+    <label for="menu-toggle" class="borders">
+        <lightning-icon icon-name="utility:list" class="slds-m-right_medium list"></lightning-icon>
+        <h1 style="font-size: 30px; font-family: Georgia; font-weight: bold; margin: 0; width: fit-content;">Categories</h1> 
+    </label>
+
+     
+
+    <div class="tree-categories content-to-hide">
+        <lightning-menu-item icon-name="utility:desktop" label="Electronics"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:quote" label="Clothes"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:home" label="House&Garden"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:favorite" label="Accessories"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:animal_and_nature" label="Pets"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:activity" label="Sport"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:bookmark" label="Books"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:brush" label="Art"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:palette" label="Cosmetics"></lightning-menu-item>
+        <lightning-menu-item icon-name="utility:travel_and_places" label="Cars"></lightning-menu-item>
+    </div>
+</div>
+
+    <div class="container">
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068g5000000fUzp&operationContext=CHATTER&contentId=05Tg5000000xywD" class="sale">
+    </div>  
+    </div>
+
+   <div class="sale-between scrollable-container">
+    <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068g5000000fmgb&operationContext=CHATTER&contentId=05Tg5000000yHkL" >
+    <h2 style="font-size: 20px; font-family: Georgia; font-weight: italic;width: fit-content; padding-top:10px; padding-left:20px;">Recently Viewed</h2>
+     </div>
+     
+     
+    <div class="login-sidebar">
+        <div class="login-image">
+         <label>
+            <lightning-icon icon-name="utility:user"></lightning-icon>
+         </label>
+         </div>
+        
+
+         <h2 style="font-size: 20px; font-family: Georgia; font-weight: bold; margin: 0; width: fit-content; padding-top:10px">Welcome</h2> 
+
+        <div class="login-inputs">
+            <lightning-button variant="brand" label="Join" onclick={openModalJoin} class="btn"></lightning-button>
+            <lightning-button variant="neutral" label="Sign In" onclick={openModalSign} class="btn"></lightning-button>
+            </div>
+
+            <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fWAP&operationContext=CHATTER&contentId=05Tg5000000y06n" class="right-sale">
+       
+        </div>
+        
+    <template if:true={isJoinModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">New User</h2>
+                </header>
+            <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-input label="First Name" ></lightning-input>
+                    <lightning-input label="Last Name"></lightning-input>
+                    <lightning-input label="Mobile phone" ></lightning-input>
+                    <lightning-input label="Birthday Date" type="date"></lightning-input>
+                    <lightning-input label="Email" type="email"></lightning-input>
+                </div>
+
+               
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={closeJoinModal}></lightning-button>
+                    <lightning-button variant="brand" label="Save" onclick={closeJoinModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template if:true={isSignModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Sign In</h2>
+                </header>
+            <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-input label="First Name" ></lightning-input>
+                    <lightning-input label="Mobile phone" ></lightning-input>
+                </div>
+
+               
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={closeSignModal}></lightning-button>
+                    <lightning-button variant="brand" label="Save" onclick={closeSignModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+   
+
+    <div class="slds-grid slds-grid_align-center">
+    <div class="footer-container">
+         <h2 style="font-size: 40px; font-family: Georgia; font-weight: italic; padding-left: 30px; color:black">Super<span style="color:cornflowerblue;">Deals</span> <a href="https://example.com" class="link">View more</a> </h2> 
+         
+    <div class="image-row">
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000e9ZF&operationContext=CHATTER&contentId=05Tg5000000vzl7" class="footer-icon">
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068g5000000f0Qg&operationContext=CHATTER&contentId=05Tg5000000xGLh" class="footer-icon">
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000e9UP&operationContext=CHATTER&contentId=05Tg5000000vzgH" class="footer-icon">
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000efVt&operationContext=CHATTER&contentId=05Tg5000000wlxp" class="footer-icon">
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000ey5V&operationContext=CHATTER&contentId=05Tg5000000xBIn" class="footer-icon">
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000e9uD&operationContext=CHATTER&contentId=05Tg5000000w0HN" class="footer-icon">
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000f0dZ&operationContext=CHATTER&contentId=05Tg5000000xGaD" class="footer-icon">
+    </div>
+    </div>
+    </div>
+</template>
