@@ -159,4 +159,35 @@ export default class ProductTable extends LightningElement {
         }
     }
 
+    get pageSizeOptions() {
+    return [
+        { label: '1', value: '1' },
+        { label: '2', value: '2' },
+        { label: '3', value: '3' },
+        { label: '4', value: '4' },
+        { label: '5', value: '5' },
+    ];
+    }
+
+
+    handlePageSizeChange(event) {
+    this.pageSize = 5;
+    this.pageSize = parseInt(event.detail.value, 10);
+    this.currentPage = 1; 
+    this.updatePagedProducts();
+}
+
+    handleJumpToPage(event) {
+    const page = parseInt(event.target.value, 10);
+    this.totalPages = Math.ceil(this.products.length / this.pageSize);
+    if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+        this.updatePagedProducts();
+    }
+    else if(page > this.totalPages){
+        this.currentPage = this.totalPages;
+        this.updatePagedProducts();
+    }
+}
+
 }

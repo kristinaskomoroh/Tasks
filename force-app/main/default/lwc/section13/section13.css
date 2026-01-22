@@ -1,0 +1,16 @@
+.style{
+   display: flex;
+   flex-direction: column; 
+   align-items: center; 
+   padding-bottom: 10px;
+   width: fit-content;
+   border-radius: 10px;
+}
+
+.times{
+    padding-left: 100px;
+}
+
+.phone{
+    width: fit-content;
+}
