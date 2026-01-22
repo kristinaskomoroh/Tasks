@@ -3,13 +3,9 @@ public with sharing class WarehouseController {
         List <Warehouse1__c> warehouses = new List<Warehouse1__c>();
         List<Book1__c> books = new List<Book1__c>();
         List<SObject> records = new List<SObject>();
-        for(Integer i = 0; i < 2; i++) {
-            warehouses.add(new Warehouse1__c(External_Id__c = (300 + i), Name = 'Warehouse ' + i));
-        }
-        for(Warehouse1__c w : warehouses){
-            for(Integer j = 0; j < 2; j++) {
-                books.add(new Book1__c(Warehouses__r = new Warehouse1__c(External_Id__c = (300 + j))));
-            }
+        for(Integer i = 0; i < 5; i++) {
+            warehouses.add(new Warehouse1__c(External_Id__c = (789 + i), Name = 'Warehouse ' + i));
+            books.add(new Book1__c(Warehouses__r = new Warehouse1__c(External_Id__c = (789 + i))));
         }
         
         records.addAll(warehouses); 
@@ -22,6 +18,6 @@ public with sharing class WarehouseController {
     }
 
     public static List<Warehouse1__c> getWarehousesAndBooks() {
-         return [SELECT Name, Number_of_books__c, (SELECT Name, Warehouses__c, Serial_number__c FROM Books1__r) FROM Warehouse1__c];
+         return [SELECT Name, Number_of_books__c, (SELECT Name, Warehouses__c, Serial_number__c FROM Books1__r LIMIT 25000) FROM Warehouse1__c LIMIT 25000];
     }
 }
