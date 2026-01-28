@@ -1,0 +1,25 @@
+.borders{
+    display: inline-flex;
+    align-items: center; 
+    background-image: url('https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fRQr&operationContext=CHATTER&contentId=05Tg5000000xsO8'); 
+    border: none;
+    padding: 20px 20px;
+    margin-left: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    font-size: 20px;
+    height: auto;
+    width: auto;
+    min-width: 200px;
+    max-width: 500px;
+}
+
+.form-style { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    width: 100%; 
+    min-width: 400px;
+}
+
