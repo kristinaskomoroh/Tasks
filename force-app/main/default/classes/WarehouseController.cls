@@ -2,14 +2,11 @@ public with sharing class WarehouseController {
     public static void createRecords() {
         List <Warehouse1__c> warehouses = new List<Warehouse1__c>();
         List<Book1__c> books = new List<Book1__c>();
-        List<SObject> records = new List<SObject>();
-        for(Integer i = 0; i < 2; i++) {
-            warehouses.add(new Warehouse1__c(External_Id__c = (300 + i), Name = 'Warehouse ' + i));
-        }
-        for(Warehouse1__c w : warehouses){
-            for(Integer j = 0; j < 2; j++) {
-                books.add(new Book1__c(Warehouses__r = new Warehouse1__c(External_Id__c = (300 + j))));
-            }
+        List<SObject> records = new List<SObject>(); 
+        for(Integer i = 0; i < 5; i++) {
+            Integer externalId = 879 + i;
+            warehouses.add(new Warehouse1__c(External_Id__c = externalId, Name = 'Warehouse ' + i));
+            books.add(new Book1__c(Warehouses__r = new Warehouse1__c(External_Id__c = externalId)));
         }
         
         records.addAll(warehouses); 
