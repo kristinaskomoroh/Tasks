@@ -4,8 +4,9 @@ public with sharing class WarehouseController {
         List<Book1__c> books = new List<Book1__c>();
         List<SObject> records = new List<SObject>();
         for(Integer i = 0; i < 5; i++) {
-            warehouses.add(new Warehouse1__c(External_Id__c = (789 + i), Name = 'Warehouse ' + i));
-            books.add(new Book1__c(Warehouses__r = new Warehouse1__c(External_Id__c = (789 + i))));
+            Integer externalId = 879 + i;
+            warehouses.add(new Warehouse1__c(External_Id__c = externalId, Name = 'Warehouse ' + i));
+            books.add(new Book1__c(Warehouses__r = new Warehouse1__c(External_Id__c = externalId)));
         }
         
         records.addAll(warehouses); 
