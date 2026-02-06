@@ -6,18 +6,15 @@ public with sharing class PhoneUpdateBatchTest {
             contacts.add(new Contact(LastName = 'Test Contact1', Phone = null));
             contacts.add(new Contact(LastName = 'Test Contact2', Phone = ''));
             contacts.add(new Contact(LastName = 'Test Contact3', Phone = '456732'));
-        
         insert contacts;
         PhoneUpdateBatch batch = new PhoneUpdateBatch();
         Test.startTest();
         Database.executeBatch(batch);
         Test.stopTest();
-
         List<Contact> updatedContacts = [SELECT Id, LastName, Phone FROM Contact];
-
-        System.assert(updatedContacts[0].Phone != null);
-        System.assert(updatedContacts[1].Phone != null);
-        System.Assert.areEqual(updatedContacts[2].Phone, '456732');
+        System.assertEquals(updatedContacts[0].Phone != null);
+        System.assertEquals(updatedContacts[1].Phone != null);
+        System.assertEquals(updatedContacts[2].Phone, '456732');
     }
 
     @IsTest
@@ -31,14 +28,9 @@ public with sharing class PhoneUpdateBatchTest {
         Test.startTest();
         Database.executeBatch(batch);
         Test.stopTest();
-
-
         List<Contact> updatedContacts = [SELECT Id, LastName, Phone FROM Contact];
-
-        System.assert(updatedContacts[56].Phone != null);
-        System.assert(updatedContacts[100].Phone != null);
+        System.assertEquals(updatedContacts[56].Phone != null);
+        System.assertEquals(updatedContacts[100].Phone != null);
     }
-
-    
 }
         
