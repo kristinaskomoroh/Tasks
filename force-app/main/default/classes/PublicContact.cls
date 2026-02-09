@@ -1,30 +1,28 @@
 public class PublicContact extends Type {
-    private Integer VolunteerNumber;
-    private Contact ContactRecord;
-
-    public PublicContact(String ContactType, Decimal AmountOfMoney, Integer volunteerNumber, Contact contactRecord)
+    private Integer volunteerNumber;
+    private Contact contactRecord;
+    public PublicContact(String contactType, Decimal amountOfMoney, Integer volunteerNumber, Contact contactRecord)
     {
-        super(ContactType, AmountOfMoney);
-        this.AmountOfMoney = contactRecord.Amount__c;
-        this.VolunteerNumber = volunteerNumber;
-        this.ContactRecord = contactRecord;
-        
+        super(contactType, amountOfMoney);
+        this.amountOfMoney = contactRecord.Amount__c;
+        this.volunteerNumber = volunteerNumber;
+        this.contactRecord = contactRecord;
     }
 
     public void setContactRecord(Contact c) {
-        ContactRecord = c;
+        contactRecord = c;
     }
 
     public Integer getVolunteerNumber() {
-        return VolunteerNumber;
+        return volunteerNumber;
     }
 
     public Contact getContactRecord() {
-        return ContactRecord;
+        return contactRecord;
     }
 
     public void randomVolunteerNumber() {
-        VolunteerNumber = Math.abs(Math.mod(Crypto.getRandomInteger(), 1000000));
-        this.ContactType = 'Person';
+        volunteerNumber = Math.abs(Math.mod(Crypto.getRandomInteger(), 1000000));
+        this.contactType = 'Person';
     }
 }

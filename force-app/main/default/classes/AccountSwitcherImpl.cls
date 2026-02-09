@@ -1,14 +1,12 @@
 public class AccountSwitcherImpl implements AccountSwitcher {
 
-    public List<Type> AllContacts = new List<Type>();
+    public List<Type> allContacts = new List<Type>();
     
-
     public class DataResult {
-        public List<PrivateContact> ChangedPrivateContacts = new List<PrivateContact>();
-        public List<PublicContact> ChangedPublicContacts = new List<PublicContact>();  
-        public List<PrivateContact> NonChangedPrivateContacts = new List<PrivateContact>();
-
-}
+        public List<PrivateContact> changedPrivateContacts = new List<PrivateContact>();
+        public List<PublicContact> changedPublicContacts = new List<PublicContact>();  
+        public List<PrivateContact> nonChangedPrivateContacts = new List<PrivateContact>();
+    }
 
     public AccountSwitcherImpl.DataResult switchAccount() {
         List<PrivateContact> privateContacts = new List<PrivateContact>();
@@ -16,7 +14,7 @@ public class AccountSwitcherImpl implements AccountSwitcher {
        
         AccountSwitcherImpl.DataResult dr = new DataResult();
         
-        for(Type t : AllContacts){
+        for(Type t : allContacts){
             if(t instanceof PrivateContact){
                 privateContacts.add((PrivateContact)t);
             }
@@ -24,69 +22,57 @@ public class AccountSwitcherImpl implements AccountSwitcher {
                 publicContacts.add((PublicContact)t);
             }  
         }
-
         for(Integer i = 0; i < privateContacts.size(); i++){
             PrivateContact privateItem = privateContacts[i];
             PublicContact publicItem = publicContacts[i];
-            
             if(privateItem.getContactType() == 'Premier')
             {
-                dr.NonChangedPrivateContacts.add(privateItem);
-                continue;
+                dr.nonChangedPrivateContacts.add(privateItem);
             }
-           else{
+            else{
                Id tempAccountId =  privateItem.getContactRecord().AccountId;
                privateItem.getContactRecord().AccountId = publicItem.getContactRecord().AccountId;
                publicItem.getContactRecord().AccountId = tempAccountId;
             }
-            dr.ChangedPrivateContacts.add(privateItem);
-            dr.ChangedPublicContacts.add(publicItem);
+            dr.changedPrivateContacts.add(privateItem);
+            dr.changedPublicContacts.add(publicItem);
         }
-
         if(privateContacts.size() != publicContacts.size()){
             System.debug('Different number of contacts');
         }
-            
-
         List<Contact> contactsToUpdate = new List<Contact>();
-        for(PrivateContact privateC : dr.ChangedPrivateContacts){
+        for(PrivateContact privateC : dr.changedPrivateContacts){
             contactsToUpdate.add(privateC.getContactRecord());
         }
-
-        for(PublicContact publicC : dr.ChangedPublicContacts){
+        for(PublicContact publicC : dr.changedPublicContacts){
             contactsToUpdate.add(publicC.getContactRecord());
         }
-
         try{
             update contactsToUpdate;
-            System.debug('Contacts updated');
         }
-        catch(DMLException e){
-            System.debug('DML Error' + e.getMessage());
+        catch(Exception e){
+            System.debug(e.getMessage());
         }
         return dr;
     }
 
-
-    
     public void getAndSort() {
-        List<Contact> contacts = [SELECT Id, LastName, FirstName, Amount__c, AccountId FROM Contact WHERE Amount__c != null ];
+        List<Contact> contacts = [SELECT Id, LastName, FirstName, Amount__c, AccountId FROM Contact WHERE Amount__c != null ORDER BY Amount__c DESC];
         for(Contact c : contacts){
             if(c.Amount__c > 10000){
                 PrivateContact pc = new PrivateContact('', 0.0, 0, c);
                 pc.setContactRecord(c);
                 pc.getAmountOfMoney();
-                pc.randomCardNumber();
-                this.AllContacts.add(pc);
-
+                pc.randomCardNumber();  
+                this.allContacts.add(pc);
             }
             else {
                 PublicContact pb = new PublicContact('', 0.0, 0, c);
                 pb.setContactRecord(c);
                 pb.randomVolunteerNumber();
                 pb.getAmountOfMoney();
-                this.AllContacts.add(pb);
+                this.allContacts.add(pb);
             }   
-        }
+        } 
     }
 }

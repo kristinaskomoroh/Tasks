@@ -1,20 +1,17 @@
-public virtual class Type {
-    protected String ContactType; 
+public virtual class Type{
+    protected String contactType; 
+    protected Decimal amountOfMoney;
 
-    protected Decimal AmountOfMoney;
-
-    public Type(String ContactType, Decimal AmountOfMoney) {
-        this.ContactType = ContactType;
-        this.AmountOfMoney = AmountOfMoney;
+    public Type(String contactType, Decimal amountOfMoney) {
+        this.contactType = contactType;
+        this.amountOfMoney = amountOfMoney;
     }
 
     public String getContactType() {
-        return ContactType;
+        return contactType;
     }
 
     public Decimal getAmountOfMoney() {
-        return AmountOfMoney;
+        return amountOfMoney;
     }
-
-   
 }

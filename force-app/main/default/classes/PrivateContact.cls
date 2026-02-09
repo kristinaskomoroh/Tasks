@@ -1,36 +1,33 @@
-public class PrivateContact extends Type {
-    private Integer CardNumber;
-    private Contact ContactRecord;
+public class PrivateContact extends Type{
+    private Integer cardNumber;
+    private Contact contactRecord;
 
-    
-    public PrivateContact(String ContactType, Decimal AmountOfMoney, Integer CardNumber, Contact contactRecord) {
-        super(ContactType, AmountOfMoney);
-        this.AmountOfMoney = contactRecord.Amount__c;
-        this.CardNumber = cardNumber;
-        this.ContactRecord = contactRecord;
+    public PrivateContact(String contactType, Decimal amountOfMoney, Integer cardNumber, Contact contactRecord) {
+        super(contactType, amountOfMoney);
+        this.amountOfMoney = contactRecord.Amount__c;
+        this.cardNumber = cardNumber;
+        this.contactRecord = contactRecord;
     }
 
-   
     public void setContactRecord(Contact c) {
-        ContactRecord = c;
+        contactRecord = c;
     }
 
-    
     public Integer getCardNumber() {
-        return CardNumber;
+        return cardNumber;
     }
 
     public Contact getContactRecord() {
-        return ContactRecord;
+        return contactRecord;
     }
 
     public void randomCardNumber() {
-        CardNumber = Math.abs(Math.mod((Crypto.getRandomInteger()), 1000000));
+        cardNumber = Math.abs(Math.mod((Crypto.getRandomInteger()), 1000000));
         checkDigits();
     }
 
     private void checkDigits() {
-        String cardNumberStr = String.valueOf(CardNumber);
+        String cardNumberStr = String.valueOf(cardNumber);
         Map<String, Integer> digitsMap = new Map<String, Integer>();
         for(Integer i = 0; i < cardNumberStr.length(); i++){
             String digits = cardNumberStr.substring(i, i+1);
@@ -42,11 +39,10 @@ public class PrivateContact extends Type {
         }
         for(String digit : digitsMap.keySet()){
             if(digitsMap.get(digit) >= 3){
-                this.ContactType = 'Premier';
+                this.contactType = 'Premier';
                 return;
             }
         }
-        this.ContactType = 'Person';
+        this.contactType = 'Person';
     }
-    
 }

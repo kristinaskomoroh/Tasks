@@ -9,7 +9,6 @@ public with sharing class TestFactory {
         insert contacts;
         return contacts;
     }
-
     @IsTest
     public static List<Contact> createPublicContact() {
         Account acc2 = new Account(Name = 'Public Account');
@@ -18,6 +17,5 @@ public with sharing class TestFactory {
         contacts.add(new Contact(LastName = 'test3Last', FirstName = 'test3First', Amount__c = 78, AccountId = acc2.Id));
         insert contacts;
         return contacts;
-       
     }
 }
