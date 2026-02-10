@@ -44,7 +44,6 @@
         }
     },
 
-
     handleLimitChange : function(component, event, helper){
         let limitValue = component.get("v.limitValue");
     },
@@ -71,5 +70,4 @@
             alert("Please generate a query first.");
         }
     }
-
 })

@@ -1,110 +1,92 @@
 <aura:component controller="SoqlController" implements="flexipage:availableForAllPageTypes">
     <aura:attribute name="objectOptions" type="List" default="[]" />
     <aura:attribute name="fieldOptions" type="List" default="[]" />
-   
-
     <aura:attribute name="selectedObject" type="String" default=""/>
     <aura:attribute name="selectedFields" type="List" default="[]"/>
-
     <aura:attribute name="whereField" type="String" default=""/>
     <aura:attribute name="whereOperator" type="String" default="="/>
     <aura:attribute name="whereValue" type="String" default=""/>
     <aura:attribute name="operatorOptions" type="List" default="[
-    {'label': 'Equals', 'value': '='},
-    {'label': 'Not equals', 'value': '!='},
-    {'label': 'Contains (LIKE)', 'value': 'LIKE'},
-    {'label': 'Greater than', 'value': '&gt;'},
-    {'label': 'Less than', 'value': '&lt;'}
-    ]"/>
+        {'label': 'Equals', 'value': '='},
+        {'label': 'Not equals', 'value': '!='},
+        {'label': 'Contains (LIKE)', 'value': 'LIKE'},
+        {'label': 'Greater than', 'value': '&gt;'},
+        {'label': 'Less than', 'value': '&lt;'}
+        ]"
+    />
     <aura:attribute name="limitValue" type="String" default=""/>
     <aura:attribute name="offsetValue" type="String" default=""/>
     <aura:attribute name="columns" type="List" default="[]"/>
-    
-
     <aura:attribute name="finalQuery" type="String" default=""/>
     <aura:attribute name="queryData" type="List" default="[]"/>
-
     <aura:attribute name="isFieldSelected" type="Boolean" default="false"/>
     <aura:attribute name="isWhereConditionSelected" type="Boolean" default="false"/>
     <aura:attribute name="isLimitAndOffsetSelected" type="Boolean" default="false"/>
     <aura:attribute name="isInvalidInput" type="Boolean" default="false"/>
     <aura:attribute name="hasExecuted" type="Boolean" default="false"/>
     
-
-
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
     <aura:handler name="change" value="{!v.selectedFields}" action="{!c.handleFieldChange}" />
-
      <div class="slds-grid slds-grid_align-center">
         <div class="slds-col">
             <h1 style="font-size:40px; font-family:Georgia; font-weight:bold;">SOQL Builder</h1>
         </div>
     </div>
-
     <p style="font-size:20px; font-family:Georgia; font-style:italic;">Choose the object, field and criteria to build a SOQL query below:</p>
-
-            <lightning:combobox label="Select Object" options="{!v.objectOptions}" value="{!v.selectedObject}" onchange="{!c.handleObjectChange}" />
-        
+    <lightning:combobox label="Select Object" options="{!v.objectOptions}" value="{!v.selectedObject}" onchange="{!c.handleObjectChange}" />
     <aura:if isTrue="{!not(empty(v.selectedObject))}">
-            <div class="slds-m-top_medium">
-                <lightning:dualListbox label="Select Fields" sourceLabel="Available" selectedLabel="Selected" options="{!v.fieldOptions}" value="{!v.selectedFields}" />
+        <div class="slds-m-top_medium">
+            <lightning:dualListbox label="Select Fields" sourceLabel="Available" selectedLabel="Selected" options="{!v.fieldOptions}" value="{!v.selectedFields}" />
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.isFieldSelected}">
+        <p class="slds-m-top_medium"><strong>Add Filter:</strong></p>
+            <div class="slds-grid slds-gutters slds-m-top_x-small">
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning:combobox label="Field" options="{!v.fieldOptions}" value="{!v.whereField}" onchange="{!c.handleWhereFieldChange}" />
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning:combobox label="Operator" options="{!v.operatorOptions}" value="{!v.whereOperator}" onchange="{!c.handleOperatorChange}" />
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning:input label="Value" value="{!v.whereValue}" onchange="{!c.handleWhereValueChange}" />
+                </div>
             </div>
     </aura:if>
-
-            <aura:if isTrue="{!v.isFieldSelected}">
-            <p class="slds-m-top_medium"><strong>Add Filter:</strong></p>
-                    <div class="slds-grid slds-gutters slds-m-top_x-small">
-                        <div class="slds-col slds-size_1-of-3">
-                            <lightning:combobox label="Field" options="{!v.fieldOptions}" value="{!v.whereField}" onchange="{!c.handleWhereFieldChange}" />
-                        </div>
-                        <div class="slds-col slds-size_1-of-3">
-                            <lightning:combobox label="Operator" options="{!v.operatorOptions}" value="{!v.whereOperator}" onchange="{!c.handleOperatorChange}" />
-                        </div>
-                        <div class="slds-col slds-size_1-of-3">
-                            <lightning:input label="Value" value="{!v.whereValue}" onchange="{!c.handleWhereValueChange}" />
-                    </div>
-                </div>
-            </aura:if>
-        
-
     <aura:if isTrue="{!v.isWhereConditionSelected}">
-                <div class="slds-grid slds-gutters slds-m-top_medium">
-                    <div class="slds-col slds-size_1-of-2">
-                        <lightning:input type="number" label="Enter limit" value="{!v.limitValue}" onchange="{!c.handleLimitChange}"></lightning:input>
-                    </div>
-                    <div class="slds-col slds-size_1-of-2">
-                        <lightning:input type="number" label="Enter offset" value="{!v.offsetValue}" onchange="{!c.handleOffsetChange}"></lightning:input>
-                    </div>
-                    </div>
-                    
-                <aura:if isTrue="{!v.isLimitAndOffsetSelected}">
-                    <div class="slds-grid slds-grid_align-center slds-m-top_large">
-                        <div class="slds-col">
-                            <lightning:button label="Generate Query" onclick="{!c.handleGenerate}" class="slds-m-top_medium"></lightning:button>
-                        </div>
-                    </div>
-                </aura:if>
+        <div class="slds-grid slds-gutters slds-m-top_medium">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning:input type="number" label="Enter limit" value="{!v.limitValue}" onchange="{!c.handleLimitChange}"></lightning:input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning:input type="number" label="Enter offset" value="{!v.offsetValue}" onchange="{!c.handleOffsetChange}"></lightning:input>
+            </div>
+        </div>  
+        <aura:if isTrue="{!v.isLimitAndOffsetSelected}">
+            <div class="slds-grid slds-grid_align-center slds-m-top_large">
+                <div class="slds-col">
+                    <lightning:button label="Generate Query" onclick="{!c.handleGenerate}" class="slds-m-top_medium"></lightning:button>
+                </div>
+            </div>
+        </aura:if>
     </aura:if>
-
     <aura:if isTrue="{!not(empty(v.finalQuery))}">
-                <div class="slds-grid slds-gutters slds-m-top_large" style="width:auto">
-                     <div class="slds-col slds-size_1-of-1">
-                        <lightning:textarea label="Edit Generated SOQL" value="{!v.finalQuery}" onchange="{!c.handleQueryEdit}" class="custom-textarea"></lightning:textarea>
-                     <div class="slds-grid slds-grid_align-center slds-m-top_large">
-                     <div class="slds-col">
+        <div class="slds-grid slds-gutters slds-m-top_large" style="width:auto">
+            <div class="slds-col slds-size_1-of-1">
+                <lightning:textarea label="Edit Generated SOQL" value="{!v.finalQuery}" onchange="{!c.handleQueryEdit}" class="custom-textarea"></lightning:textarea>
+                <div class="slds-grid slds-grid_align-center slds-m-top_large">
+                    <div class="slds-col">
                         <lightning:button label="Execute Query" onclick="{!c.handleExecute}" class="slds-m-top_medium"></lightning:button>
                     </div>
-                    </div>
-                    </div>
                 </div>
+            </div>
+        </div>
     </aura:if>
     
     <aura:if isTrue="{!v.isInvalidLimit}">
         <aura:if isTrue="{!v.hasExecuted}">
             <p class="slds-text-color_weak slds-m-top_medium">No records found (check your LIMIT or filters).</p>
+        </aura:if>
     </aura:if>
-</aura:if>
-
     <c:soqlResult data="{!v.queryData}"/>
-
 </aura:component>
