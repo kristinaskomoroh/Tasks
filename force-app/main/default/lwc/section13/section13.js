@@ -23,7 +23,6 @@ export default class Section13 extends LightningElement {
             hour12: false, 
             timeZoneName: 'short'
         };
-
         this.time1 = this.formatTime(now, 'America/New_York', options);
         this.time2 = this.formatTime(now, 'Europe/London', options);
         this.time3 = this.formatTime(now, 'Asia/Tokyo', options);
@@ -62,12 +61,10 @@ export default class Section13 extends LightningElement {
             role: 'Admin', 
             status: 'Active' 
         };
-
         const criteria = { 
             role: 'Admin', 
             status: 'Active' 
         };
-
         const isMatch = this.matches(user, criteria);
         console.log('Is the user suitable?', isMatch); 
     }
@@ -77,7 +74,6 @@ export default class Section13 extends LightningElement {
             target.hasOwnProperty(key) && target[key] === source[key]
         );
     }
-
 
     handlePhoneNumber(event){
         const phoneInput = event.target;
@@ -102,11 +98,11 @@ export default class Section13 extends LightningElement {
 
     handleSearch(){
         searchAccounts({searchItem: this.searchKey})
-            .then(result => {
-                this.searchResult = JSON.parse(result);
-            })
-            .catch(error => {
-                console.error(error);
+        .then(result => {
+            this.searchResult = JSON.parse(result);
+        })
+        .catch(error => {
+            console.error(error);
         });
     }
 
@@ -124,6 +120,5 @@ export default class Section13 extends LightningElement {
         if(typeof param1 === 'number' && typeof param2 === 'number'){
             return Math.max(param1, param2);
         }
-        
     }
 }

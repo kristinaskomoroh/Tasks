@@ -1,38 +1,35 @@
 <template>
     <div class="container">
-    <lightning-card title="Current time in 3 different time zones" class="style" onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave}></lightning-card>
-        <div class="slds-p-around_medium times">
-            <p>New York (EST/EDT):{time1}</p>
-            <p>London (GMT):{time2}</p>
-            <p>Tokyo (CET):{time3}</p>
+        <lightning-card title="Current time in 3 different time zones" class="style" onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave}>
+            <div class="slds-p-around_medium times">
+                <p>New York (EST/EDT):{time1}</p>
+                <p>London (GMT):{time2}</p>
+                <p>Tokyo (CET):{time3}</p>
             </div>
-        </div>
-
+        </lightning-card>
+    </div>
     <lightning-card title="Coin Simulator" class="style">
         <div class="slds-p-around_medium slds-text-align_center">
             <template if:true={isLoading}>
                 <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
-             </template>
+            </template>
             <button class="slds-button slds-button_brand" onclick={handleFlip}>Flip Coin</button>
             <p class="slds-m-top_medium slds-text-heading_large">{coinResult}</p>
         </div>
     </lightning-card>
-
     <lightning-input type="tel" label="Enter Phone Number" pattern="^[\d\s\-\(\)\+]{13,17}$" class="phone" placeholder="+375(__)___-__-__" message-when-pattern-mismatch="Enter a validate phone number" onchange={handlePhoneNumber}></lightning-input>
-    
     <lightning-card title="Account & Contact Search" icon-name="standard:search">
         <div class="slds-p-around_medium">
             <lightning-input type="search" label="Search Account by Name" onchange={handleInputChange}></lightning-input>
             <lightning-button label="Search" onclick={handleSearch} variant="brand" class="slds-m-top_small"></lightning-button>
-
             <div class="slds-m-top_medium">
                 <template for:each={searchResult} for:item="wrap">
                     <div key={wrap.accName} class="slds-box slds-m-bottom_small">
                         <p><b>Account: {wrap.accName}</b></p>
-                         <p><b>Contacts:</b></p>
-                            <template for:each={wrap.contactNames} for:item="con">
-                                <span key={con} class="slds-badge">{con}</span>
-                            </template>
+                        <p><b>Contacts:</b></p>
+                        <template for:each={wrap.contactNames} for:item="con">
+                            <span key={con} class="slds-badge">{con}</span>
+                        </template>
                     </div>
                 </template>
             </div>
