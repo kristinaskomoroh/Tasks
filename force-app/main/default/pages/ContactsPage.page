@@ -11,7 +11,6 @@
             <apex:column value="{!contact.Email}"/>
             <apex:column value="{!contact.Phone}"/>
         </apex:pageBlockTable>
-        
         <table style="width: 100%">
             <tr>
                 <td>

@@ -12,6 +12,6 @@
             <apex:column value="{!contact.Amount__c}"/>
             <apex:column value="{!contact.Is_title_approved__c}"/>
         </apex:pageBlockTable>
-    </apex:pageBlock>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>
