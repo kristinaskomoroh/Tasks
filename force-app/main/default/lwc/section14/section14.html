@@ -4,9 +4,7 @@
             <h1 style="font-size:40px; font-family:Georgia; font-weight:bold;">SOQL Builder</h1>
         </div>
     </div>
-
     <p style="font-size:20px; font-family:Georgia; font-style:italic;">Choose the object, field and criteria to build a SOQL query below:</p>
-
     <div class="borders">
         <div class="form-style">
             <lightning-combobox name="objectSelector" label="Choose an object" value={selectedObject} placeholder="Enter the name..." options={objectOptions} onchange={handleChangeObject}> </lightning-combobox>
@@ -28,11 +26,9 @@
                             <lightning-input label="Value" type="text" onchange={handleWhereValueChange}></lightning-input>
                         </div>
                     </div>
-                </template>
-            </div>
+            </template>
         </div>
-    
- 
+    </div>
     <template if:true={isWhereConditionSelected}>
         <div class="borders">
             <div class="form-style">
@@ -43,8 +39,7 @@
                     <div class="slds-col slds-size_1-of-2">
                         <lightning-input type="number" label="Enter offset" placeholder="..." onchange={handleOffsetChange}></lightning-input>
                     </div>
-                    </div>
-                    
+                </div>
                 <template if:true={isLimitAndOffsetSelected}>
                     <div class="slds-grid slds-grid_align-center slds-m-top_large">
                         <div class="slds-col">
@@ -55,29 +50,27 @@
             </div>
         </div>
     </template>
-
     <template if:true={finalQuery}>
-         <div class="borders">
+        <div class="borders">
             <div class="form-style" style="width:auto">
                 <div class="slds-grid slds-gutters slds-m-top_large">
-                     <div class="slds-col slds-size_1-of-1">
-                        <lightning-textarea label="Edit Generated SOQL" value={finalQuery} onchange={handleQueryEdit} class="custom-textarea"></lightning-textarea>
-                     <div class="slds-grid slds-grid_align-center slds-m-top_large">
-                     <div class="slds-col">
-                        <lightning-button label="Execute Query" onclick={handleExecute} class="slds-m-top_medium"></lightning-button>
-                    </div>
-                    </div>
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning-textarea label="Edit Generated SOQL" value={finalQuery} onchange={handleQueryEdit} class="custom-textarea">
+                            <div class="slds-grid slds-grid_align-center slds-m-top_large">
+                                <div class="slds-col">
+                                    <lightning-button label="Execute Query" onclick={handleExecute} class="slds-m-top_medium"></lightning-button>
+                                </div>
+                            </div>
+                        </lightning-textarea>
                     </div>
                 </div>
             </div>
         </div>
-    
     <template if:true={isInvalidLimit}>
         <template if:true={hasExecuted}>
             <p class="slds-text-color_weak slds-m-top_medium">No records found (check your LIMIT or filters).</p>
         </template>
     </template>
-
     <c-soql-result query-result={finalQuery}></c-soql-result>
     <c-soql-result data={queryData}></c-soql-result>
     <c-soql-result has-executed={hasExecuted}></c-soql-result>

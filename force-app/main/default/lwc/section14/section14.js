@@ -16,7 +16,6 @@ export default class Section14 extends LightningElement {
     @track columns = [];
     @track isInvalidLimit = false;
     @track hasExecuted = false;
-
     selectedObject = '';
     selectedFields = [];
 
@@ -46,13 +45,13 @@ export default class Section14 extends LightningElement {
         this.selectedObject = event.detail.value;
         this.fieldOptions = [];
         getObjectFields({objectName: this.selectedObject})
-            .then(result => {
-                this.fieldOptions = [...result].sort((a, b) => a.label.localeCompare(b.label));
-            })
-            .catch(error => {
-                console.error('Error fetching fields:', error);
-            });
-        }
+        .then(result => {
+            this.fieldOptions = [...result].sort((a, b) => a.label.localeCompare(b.label));
+        })
+        .catch(error => {
+            console.error('Error fetching fields:', error);
+        });
+    }
 
     handleFieldChange(event) {
         this.selectedFields = event.detail.value;
@@ -70,8 +69,8 @@ export default class Section14 extends LightningElement {
         }else{
             this.isInvalidLimit = false;
         }
-
     }
+
     handleOffsetChange(event) { this.offsetValue = event.detail.value; }
 
     handleGenerate() {
@@ -82,10 +81,10 @@ export default class Section14 extends LightningElement {
             query += ` WHERE ${this.whereField} ${this.whereOperator} ${formattedValue}`;
         }
         if (this.limitValue !== '' && this.limitValue !== null) {
-        query += ` LIMIT ${this.limitValue}`;
+            query += ` LIMIT ${this.limitValue}`;
         }
         if (this.offsetValue !== '' && this.offsetValue !== null) {
-        query += ` OFFSET ${this.offsetValue}`;
+            query += ` OFFSET ${this.offsetValue}`;
         }
         this.finalQuery = query;
     }
@@ -113,8 +112,8 @@ export default class Section14 extends LightningElement {
                 this.queryData = result;
             })
         .catch(error => {
-                this.queryData = [];
-                console.error('SOQL Error:', error.body.message);
+            this.queryData = [];
+            console.error('SOQL Error:', error.body.message);
         });
     }
 }
