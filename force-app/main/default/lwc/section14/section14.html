@@ -55,22 +55,19 @@
             <div class="form-style" style="width:auto">
                 <div class="slds-grid slds-gutters slds-m-top_large">
                     <div class="slds-col slds-size_1-of-1">
-                        <lightning-textarea label="Edit Generated SOQL" value={finalQuery} onchange={handleQueryEdit} class="custom-textarea">
+                        <lightning-textarea label="Edit Generated SOQL" value={finalQuery} onchange={handleQueryEdit} class="custom-textarea"></lightning-textarea>
                             <div class="slds-grid slds-grid_align-center slds-m-top_large">
                                 <div class="slds-col">
                                     <lightning-button label="Execute Query" onclick={handleExecute} class="slds-m-top_medium"></lightning-button>
                                 </div>
                             </div>
-                        </lightning-textarea>
                     </div>
                 </div>
             </div>
         </div>
-    <template if:true={isInvalidLimit}>
-        <template if:true={hasExecuted}>
+        <template if:true={emptyMessage}>
             <p class="slds-text-color_weak slds-m-top_medium">No records found (check your LIMIT or filters).</p>
         </template>
-    </template>
     <c-soql-result query-result={finalQuery}></c-soql-result>
     <c-soql-result data={queryData}></c-soql-result>
     <c-soql-result has-executed={hasExecuted}></c-soql-result>

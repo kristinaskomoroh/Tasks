@@ -10,12 +10,12 @@ export default class Section14 extends LightningElement {
     @track whereField = '';
     @track whereOperator = '=';
     @track whereValue = '';
-    @track limitValue = '';
-    @track offsetValue = '';
+    @track limitValue = 0;
+    @track offsetValue = 0;
     @track queryData = [];
     @track columns = [];
     @track isInvalidLimit = false;
-    @track hasExecuted = false;
+    @track emptyMessage = false;
     selectedObject = '';
     selectedFields = [];
 
@@ -63,12 +63,6 @@ export default class Section14 extends LightningElement {
 
     handleLimitChange(event) { 
         this.limitValue = event.detail.value; 
-        if(this.limitValue === '0'){
-            this.isInvalidLimit = true;
-            this.queryData = [];
-        }else{
-            this.isInvalidLimit = false;
-        }
     }
 
     handleOffsetChange(event) { this.offsetValue = event.detail.value; }
@@ -80,10 +74,10 @@ export default class Section14 extends LightningElement {
             let formattedValue = this.whereOperator === 'LIKE' ? `'%${this.whereValue}%'` : `'${this.whereValue}'`;
             query += ` WHERE ${this.whereField} ${this.whereOperator} ${formattedValue}`;
         }
-        if (this.limitValue !== '' && this.limitValue !== null) {
+        if (this.limitValue && Number(this.limitValue) > 0) {
             query += ` LIMIT ${this.limitValue}`;
         }
-        if (this.offsetValue !== '' && this.offsetValue !== null) {
+        if (this.offsetValue && Number(this.offsetValue) > 0) {
             query += ` OFFSET ${this.offsetValue}`;
         }
         this.finalQuery = query;
@@ -106,14 +100,17 @@ export default class Section14 extends LightningElement {
     }
 
     handleExecute(){
-        this.hasExecuted = true;
         executeSOQL({query: this.finalQuery})
         .then(result => {
                 this.queryData = result;
+                if(result.length === 0){
+                    this.emptyMessage = true;
+                }
             })
         .catch(error => {
             this.queryData = [];
             console.error('SOQL Error:', error.body.message);
+            this.emptyMessage = true;
         });
     }
 }
