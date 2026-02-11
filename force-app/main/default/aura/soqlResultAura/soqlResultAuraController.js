@@ -6,7 +6,6 @@
             let pageSize = component.get("v.pageSize");
             let totalPages = Math.ceil(value.length / pageSize);
             component.set("v.totalPages", totalPages);
-
             component.set("v.currentPage", 1);
             helper.updatePagedRecords(component);
         }else {
@@ -35,10 +34,8 @@
     handleSort : function(component, event, helper){
         let fieldName = event.getParam('fieldName');
         let sortDirection = event.getParam('sortDirection');
-        
         component.set("v.sortedBy", fieldName);
-        component.set("v.sortedDirection", sortedDirection);
-
-        helper.sortData(component, fieldName, sortedDirection);
+        component.set("v.sortedDirection", sortDirection);
+        helper.sortData(component, fieldName, sortDirection);
     }
 })
