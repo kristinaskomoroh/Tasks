@@ -22,8 +22,7 @@
     <aura:attribute name="isFieldSelected" type="Boolean" default="false"/>
     <aura:attribute name="isWhereConditionSelected" type="Boolean" default="false"/>
     <aura:attribute name="isLimitAndOffsetSelected" type="Boolean" default="false"/>
-    <aura:attribute name="isInvalidInput" type="Boolean" default="false"/>
-    <aura:attribute name="hasExecuted" type="Boolean" default="false"/>
+    <aura:attribute name="emptyMessage" type="Boolean" default="false"/>
     
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
     <aura:handler name="change" value="{!v.selectedFields}" action="{!c.handleFieldChange}" />
@@ -82,11 +81,8 @@
             </div>
         </div>
     </aura:if>
-    
-    <aura:if isTrue="{!v.isInvalidLimit}">
-        <aura:if isTrue="{!v.hasExecuted}">
-            <p class="slds-text-color_weak slds-m-top_medium">No records found (check your LIMIT or filters).</p>
-        </aura:if>
+    <aura:if isTrue="{!v.emptyMessage}">
+        <p class="slds-text-color_weak slds-m-top_medium">No records found (check your LIMIT or filters).</p>
     </aura:if>
     <c:soqlResult data="{!v.queryData}"/>
 </aura:component>

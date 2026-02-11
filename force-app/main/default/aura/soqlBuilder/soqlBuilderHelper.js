@@ -48,37 +48,40 @@
 
         if(whereF && whereOp && whereVal){
             let formattedVal;
-            if (whereOp !== 'LIKE' && !isNaN(whereVal) && whereVal.trim() !== "") {
-            formattedVal = whereVal;
-            } else if (whereOp === 'LIKE') {
-            formattedVal = "'%" + whereVal + "%'";
+            if (whereOp === 'LIKE') {
+                formattedVal = "'%" + whereVal + "%'";
+            } else if (whereVal.trim() === "") {
+                formattedVal = "''";
             } else {
-            formattedVal = "'" + whereVal + "'";
-        }
+                formattedVal = "'" + whereVal + "'";
+            }
             query += " WHERE " + whereF + " " + whereOp + " " + formattedVal;
         }
-
-        if(limitVal !== "" && limitVal !== null){
+        if(limitVal && Number(limitVal) > 0){
             query += " LIMIT " + limitVal;
         }
 
-        if(offsetVal !== "" && offsetVal !== null){
+        if(offsetVal && Number(offsetVal) > 0){
             query += " OFFSET " + offsetVal;
         }
-
         return query;
-        
     },
 
     executeQuery : function(component, query){
         let action = component.get("c.executeSOQL");
+        component.set("v.emptyMessage", false);
+        component.set("v.queryData", []);
         action.setParams({
             query : query
         });
         action.setCallback(this, function(response) {
             let state = response.getState();
             if (state === "SUCCESS") {
-                component.set("v.queryData", response.getReturnValue());
+                let result = response.getReturnValue();
+                component.set("v.queryData", result);
+                if(!result || result.length === 0){
+                    component.set("v.emptyMessage", true);
+                }
             } else {
                 console.error("Error executing query");
             }
