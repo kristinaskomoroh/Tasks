@@ -1,10 +1,10 @@
 public with sharing class PhoneUpdateBatch implements Database.Batchable<SObject> {
-    public Database.QueryLocator start(Database.BatchableContext bc) 
+    public Database.QueryLocator start(Database.BatchableContext bc)
     {
         return Database.getQueryLocator('SELECT Id,Phone FROM Contact');
     }
 
-    public void execute(Database.BatchableContext bc,List<Contact> records) 
+    public void execute(Database.BatchableContext bc,List<Contact> records)
     {
         for(Contact item :records) {
             if(item.Phone == null || item.Phone == '') {

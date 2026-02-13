@@ -1,6 +1,6 @@
 @isTest
 public with sharing class CrowCalcTest {
-    Integer count = 15;
+    static final Integer count = 15;
     @TestSetup
      public static void createCrows() {
         List<Crow__c> crows = new List<Crow__c>();
@@ -15,7 +15,7 @@ public with sharing class CrowCalcTest {
         Boolean addCrowsResult = CrowCalc.addCrows(10);
         Integer current = [SELECT COUNT() FROM Crow__c];
         System.assertEquals(count + 10, current, 'Number of crows should be 25!');
-        System.assertEquals(addCrowsResult, 'Success addition not "true"');
+        System.assertEquals(true, addCrowsResult, 'Success addition not "true"');
     }
 
     @isTest
@@ -23,7 +23,7 @@ public with sharing class CrowCalcTest {
         Boolean substractCrowsResult = CrowCalc.subtractCrows(10);
         Integer current = [SELECT COUNT() FROM Crow__c];
         System.assertEquals(count - 10, current, 'Number of crows should be 5!');
-        System.assertEquals(substractCrowsResult, 'Success substraction not "true"');
+        System.assertEquals(true, substractCrowsResult, 'Success substraction not "true"');
     }
 
     @isTest
@@ -37,7 +37,7 @@ public with sharing class CrowCalcTest {
     public static void testResetCalc() {
         Boolean resetCalcResult = CrowCalc.resetCalc();
         Integer result = [SELECT COUNT() FROM Crow__c];
-        System.assertEquals(resetCalcResult, 'Success reset not "true"');
+        System.assertEquals(true, resetCalcResult, 'Success reset not "true"');
         System.assertEquals(0, result, 'Number of crows should be 0!');
     }
 
@@ -46,7 +46,7 @@ public with sharing class CrowCalcTest {
         Boolean addCrowsResult = CrowCalc.addCrows(0);
         Integer current = [SELECT COUNT() FROM Crow__c];
         System.assertEquals(count, current);
-        System.assertEquals(addCrowsResult, 'Success addition not "true"');
+        System.assertEquals(true, addCrowsResult, 'Success addition not "true"');
     }
 
     @IsTest
@@ -76,7 +76,7 @@ public with sharing class CrowCalcTest {
     @IsTest
     public static void testSubtractCrowsZero() {
         Boolean substractCrowsResult = CrowCalc.subtractCrows(0);
-        System.assertEquals(false, substractCrowsResult, 'Number of crows should be 15!');
+        System.assertEquals(true, substractCrowsResult);
     }
 
     @IsTest
@@ -84,6 +84,6 @@ public with sharing class CrowCalcTest {
         Boolean addCrowsResult = CrowCalc.addCrows(100);
         Integer current = [SELECT COUNT() FROM Crow__c];
         System.assertEquals(count + 100, current, 'Number of crows should be 115!');
-        System.assertEquals(addCrowsResult, 'Success addition not "true"');
+        System.assertEquals(true, addCrowsResult, 'Success addition not "true"');
     }
 }

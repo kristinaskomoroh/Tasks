@@ -12,9 +12,9 @@ public with sharing class PhoneUpdateBatchTest {
         Database.executeBatch(batch);
         Test.stopTest();
         List<Contact> updatedContacts = [SELECT Id, LastName, Phone FROM Contact];
-        System.assertEquals(updatedContacts[0].Phone != null);
-        System.assertEquals(updatedContacts[1].Phone != null);
-        System.assertEquals(updatedContacts[2].Phone, '456732');
+        System.assertNotEquals(null, updatedContacts[0].Phone);
+        System.assertNotEquals('', updatedContacts[1].Phone);
+        System.assertEquals('456732',updatedContacts[2].Phone);
     }
 
     @IsTest
@@ -30,7 +30,7 @@ public with sharing class PhoneUpdateBatchTest {
         Test.stopTest();
         List<Contact> updatedContacts = [SELECT Id, LastName, Phone FROM Contact];
         for(Contact c : updatedContacts){
-            System.assertEquals(c.Phone != null);
+            System.assertNotEquals(null, c.Phone);
         }
     }
 }
