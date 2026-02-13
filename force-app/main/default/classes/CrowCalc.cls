@@ -1,8 +1,7 @@
 public with sharing class CrowCalc {
-    
     // add new crows to DB, retutn true on success
     public static Boolean addCrows(Integer numberOfCrows) {
-        if (numberOfCrows == null) {
+        if (numberOfCrows == null || numberOfCrows < 0) {
             return false;
         }
 

@@ -29,8 +29,9 @@ public with sharing class PhoneUpdateBatchTest {
         Database.executeBatch(batch);
         Test.stopTest();
         List<Contact> updatedContacts = [SELECT Id, LastName, Phone FROM Contact];
-        System.assertEquals(updatedContacts[56].Phone != null);
-        System.assertEquals(updatedContacts[100].Phone != null);
+        for(Contact c : updatedContacts){
+            System.assertEquals(c.Phone != null);
+        }
     }
 }
-        
+
