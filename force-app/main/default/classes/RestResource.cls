@@ -1,13 +1,13 @@
 public with sharing class RestResource {
     @TestVisible private static Boolean calloutWasMade = false;
-    public static void addContact(String fName, String lName) {
+    public static void addContact(String firstName, String lastName) {
         HttpRequest req = new HttpRequest();
         req.setEndpoint('callout:Named1/services/apexrest/ContactAPI/');
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         Map<String, String> contactData = new Map<String, String>{
-        'FirstName' => fName,
-        'LastName' => lName
+        'FirstName' => firstName,
+        'LastName' => lastName
         };
         req.setBody(JSON.serialize(contactData));
         sendRequest(req);

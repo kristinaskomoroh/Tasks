@@ -3,7 +3,9 @@ public with sharing class ContactIntegrationTest {
     @isTest
     public static void testContactAddCallout() {
         Test.setMock(HttpCalloutMock.class, new ContactWebServiceMock());
+        Test.startTest();
         RestResource.addContact('Test', 'Contact');
+        Test.stopTest();
         System.assertEquals(1, Limits.getCallouts(),'The callout must be made');
     }
     @IsTest
