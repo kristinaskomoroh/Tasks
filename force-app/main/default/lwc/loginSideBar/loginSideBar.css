@@ -1,0 +1,55 @@
+.login-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.login-inputs {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.right-sale {
+    width: 100%;
+    height: 300px;
+    border-radius: 4px;
+    padding-top: 10px;
+    border-radius: 5%;
+}
+
+.btn {
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.login-sidebar {
+    position: absolute;
+    top: 235px;
+    right: 140px;
+    width: 250px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background-image: url('https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fRQr&operationContext=CHATTER&contentId=05Tg5000000xsO8'); 
+    background-size: cover;
+    background-position: center;
+}
+
+.welcome-style{
+    font-size: 20px;
+    font-family: Georgia;
+    font-weight: bold;
+    margin: 0;
+    width: fit-content;
+    padding-top:10px
+}

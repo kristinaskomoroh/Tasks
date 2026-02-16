@@ -1,0 +1,17 @@
+<template>
+    <div class="login-sidebar">
+        <div class="login-image">
+            <label>
+                <lightning-icon icon-name="utility:user"></lightning-icon>
+            </label>
+        </div>
+        <div class="welcome-style">
+            <h2>{labels.WelcomeLabel}</h2>
+        </div>
+        <div class="login-inputs">
+            <lightning-button variant="brand" label={labels.JoinLabel} onclick={openModalJoin} class="btn"></lightning-button>
+            <lightning-button variant="neutral" label={labels.SignInLabel} onclick={openModalSign} class="btn"></lightning-button>
+        </div>
+        <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fWAP&operationContext=CHATTER&contentId=05Tg5000000y06n" class="right-sale">
+    </div>
+</template>

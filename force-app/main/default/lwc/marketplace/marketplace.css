@@ -1,187 +1,19 @@
-.border{
-    display: inline-flex;
-    align-items: center; 
-    background-image: url('https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fRQr&operationContext=CHATTER&contentId=05Tg5000000xsO8'); 
-    border: none;
-    padding: 20px 20px;
-    margin-left: 0px;
-    margin-top: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-radius: 20px;
-}
-.custom-search {
-    width: 800px;
-    margin-right: 20px;
-    background-color:cornflowerblue;
-    border-radius: 20px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    font-style: italic;
-}
-.cart-container {
-    position: relative;
-    display: inline-block;
-    margin-right: 200px;
-}
-.cart-badge {
-    position: absolute;
-    bottom: -5px; 
-    right: -10px;
-    background-color:cornflowerblue; 
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 50%; 
-    border: 2px solid white; 
-    line-height: 1;
-    min-width: 18px;
-    text-align: center;
-}
 .main-wrapper {
     display: flex;
-    align-items: flex-start; 
+    align-items: flex-start;
 }
-.menu-checkbox:checked ~ .content-to-hide {
-    display: block;
+
+.sale{
+   width: 800px;
+   height: 450px;
 }
-.borders{
-    display: inline-flex;
-    align-items: center; 
-    background-image: url('https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fRQr&operationContext=CHATTER&contentId=05Tg5000000xsO8');  
-    border: none;
-    padding: 10px 20px;
-    margin-left: 140px;
-    margin-top: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-radius: 20px;
-    width: 250px;        
-}
-.tree-categories{
-    margin-left: 140px;
-    border-radius: 20px;
-    background-image: url('https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fRQr&operationContext=CHATTER&contentId=05Tg5000000xsO8'); 
-    width: fit-content;    
-    width: 250px;     
-    font-size: 20px; 
-    font-family: Georgia;
-    font-weight: bold;
-    padding: 10px;
-    border: 1px solid white;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-.content-to-hide {
-    display: none;
-    margin-top: 10px;
-    border-top: 1px solid white;
-}
-.list{
-    cursor: pointer; 
-    display: flex; 
-    align-items: center;
-}
-.list:hover {
-    opacity: 0.6;
-}
+
 .container{
-    display: flex;          
-    flex-direction: column; 
-    align-items: center;    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 20px;
     padding-top: 22px;
     padding-left: 40px;
     padding-bottom: 20px;
 }
-.sale{
-   width: 800px; 
-   height: 450px;
-}
-.sale-between{
-    position: absolute;
-    top: 235px;
-    right: 220px;
-}
-.scrollable-container {
-    overflow-y: scroll;
-    height: 440px; 
-    width: auto; 
-    margin-right: 190px;
-}
-.login-sidebar {
-    position: absolute;
-    top: 235px;
-    right: 140px;
-    width: 250px;         
-    height: 450px;   
-    display: flex;
-    flex-direction: column; 
-    align-items: center;    
-    padding: 20px;
-    border: 1px solid #dcdcdc;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    background-image: url('https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fRQr&operationContext=CHATTER&contentId=05Tg5000000xsO8'); 
-    background-size: cover;       
-    background-position: center;  
-}
-.login-inputs {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;     
-}
-.login-image img {
-    width: 100%;          
-    height: auto;
-    border-radius: 4px;
-    margin-bottom: 20px;
-}
-.footer-container {
-    width: 85%;
-    padding-top: 0px;
-    background-color:white;
-    border-top: 1px solid #e5e5e5;
-    border-radius: 20px;
-}
-.image-row {
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    gap: 40px; 
-}
-.footer-icon {
-    height: 200px; 
-    width: auto;
-    object-fit: contain;
-    transition: transform 0.3s ease; 
-    cursor: pointer;
-    &:hover {
-        transform: scale(1.1); 
-    }
-}
-.btn {
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 15px;
-}
-.right-sale{      
-    width: 100%;
-    height: 300px;
-    border-radius: 4px;
-    padding-top: 10px;
-    border-radius: 5%;
-}
-.link{
-    padding-left:1200px;
-    font-size: 20px;
-    padding-top:0px;
-}
-
-
-
-
-
-
-
