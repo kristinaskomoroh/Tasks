@@ -1,0 +1,11 @@
+<template>
+     <lightning-card title="Coin Simulator" class="style">
+        <div class="slds-p-around_medium slds-text-align_center">
+            <template if:true={loading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </template>
+            <button class="slds-button slds-button_brand" onclick={handleFlip}>Flip Coin</button>
+            <p class="slds-m-top_medium slds-text-heading_large">{result}</p>
+        </div>
+    </lightning-card>
+</template>

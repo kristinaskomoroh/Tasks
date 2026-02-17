@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="Account & Contact Search" icon-name="standard:search">
+        <div class="slds-p-around_medium">
+            <lightning-input type="search" label="Search Account by Name" onchange={handleInputChange}></lightning-input>
+            <lightning-button label="Search" onclick={handleSearch} variant="brand" class="slds-m-top_small"></lightning-button>
+            <div class="slds-m-top_medium">
+                <c-contact-search search-result={searchResult}></c-contact-search>
+            </div>
+        </div>
+    </lightning-card>
+</template>

@@ -1,5 +1,5 @@
-import { LightningElement } from 'lwc';
-import searchAccounts from '@salesforce/apex/AccountSearchRecords.searchAccounts';
+import { LightningElement} from 'lwc';
+
 
 export default class Section13 extends LightningElement {
     time1;
@@ -11,8 +11,6 @@ export default class Section13 extends LightningElement {
         name: 'Bob',
         surname: 'Bobinson',
     };
-    searchKey = '';
-    searchResult = [];
 
     updateTimes(){
         const now = new Date();
@@ -20,7 +18,7 @@ export default class Section13 extends LightningElement {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
-            hour12: false, 
+            hour12: false,
             timeZoneName: 'short'
         };
         this.time1 = this.formatTime(now, 'America/New_York', options);
@@ -49,39 +47,25 @@ export default class Section13 extends LightningElement {
         card.style.backgroundColor = 'white';
     }
 
-    handleFlip(){
-        this.isLoading = true;
-        setTimeout(() => {this.coinResult = Math.random() < 0.5 ? 'Heads' : 'Tails';  this.isLoading = false; setTimeout(() => {this.coinResult = '';}, 2000);}, 2000);
-    }
-
     checkCriteria() {
-        const user = { 
-            id: 1, 
-            name: 'Alice', 
-            role: 'Admin', 
-            status: 'Active' 
+        const user = {
+            id: 1,
+            name: 'Alice',
+            role: 'Admin',
+            status: 'Active'
         };
-        const criteria = { 
-            role: 'Admin', 
-            status: 'Active' 
+        const criteria = {
+            role: 'Admin',
+            status: 'Active'
         };
         const isMatch = this.matches(user, criteria);
-        console.log('Is the user suitable?', isMatch); 
+        console.log('Is the user suitable?', isMatch);
     }
 
     matches(target, source) {
-        return Object.keys(source).every(key => 
+        return Object.keys(source).every(key =>
             target.hasOwnProperty(key) && target[key] === source[key]
         );
-    }
-
-    handlePhoneNumber(event){
-        const phoneInput = event.target;
-        if(phoneInput.checkValidity()){
-            console.log('Valid phone number');
-        }else{
-            phoneInput.reportValidity();
-        }
     }
 
     setAttribute(key, value){
@@ -90,27 +74,6 @@ export default class Section13 extends LightningElement {
 
     getAttribute(key){
         return this.userProfile[key] ? this.userProfile[key] : 'Not found';
-    }
-
-    handleInputChange(event){
-        this.searchKey = event.target.value;
-    }
-
-    handleSearch(){
-        searchAccounts({searchItem: this.searchKey})
-        .then(result => {
-            this.searchResult = JSON.parse(result);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }
-
-    findContactsByAccountName(accName){
-        foundAccount = this.searchResult.find(
-            item => item.accName === accName
-        );
-        return foundAccount ? foundAccount.contactsName : [];
     }
 
     compareValues(param1, param2){
