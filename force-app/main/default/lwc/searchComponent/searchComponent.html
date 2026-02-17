@@ -1,0 +1,18 @@
+<template>
+    <div class="slds-grid slds-grid_align-center">
+        <div class="border">
+            <div class="slds-col custom-style">
+                <h1>{labels.MarketplaceLabel}</h1>
+            </div>
+            <div class="slds-col">
+                <lightning-input type="search" name="text" class="custom-search" placeholder={labels.EnterTheNameLabel} variant="label-hidden"></lightning-input>
+            </div>
+            <div class="slds-col">
+                <div class="cart-container">
+                    <lightning-button variant="brand" label={labels.CartLabel} icon-name="utility:cart"></lightning-button>
+                    <div class="cart-badge">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

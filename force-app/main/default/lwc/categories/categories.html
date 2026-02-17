@@ -1,0 +1,23 @@
+<template>
+     <div class="slds-grid slds-grid_align-center" style="display: inline-grid;">
+            <input type="checkbox" id="menu-toggle" class="menu-checkbox" style="display: none;">
+                <label for="menu-toggle" class="borders">
+                    <lightning-icon icon-name="utility:list" class="slds-m-right_medium list"></lightning-icon>
+                        <div class="categories-style">
+                            <h1>{labels.CategoriesLabel}</h1>
+                        </div>
+                </label>
+            <div class="tree-categories content-to-hide">
+                <lightning-menu-item icon-name="utility:desktop" label={labels.ElectronicsLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:quote" label={labels.ClothesLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:home" label={labels.HouseAndGardenLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:favorite" label={labels.AccessoriesLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:animal_and_nature" label={labels.PetsLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:activity" label={labels.SportLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:bookmark" label={labels.BooksLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:brush" label={labels.ArtLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:palette" label={labels.CosmeticsLabel}></lightning-menu-item>
+                <lightning-menu-item icon-name="utility:travel_and_places" label={labels.CarsLabel}></lightning-menu-item>
+            </div>
+        </div>
+</template>

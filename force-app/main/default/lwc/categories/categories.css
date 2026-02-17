@@ -1,0 +1,53 @@
+.menu-checkbox:checked ~ .content-to-hide {
+    display: block;
+}
+
+.borders{
+    display: inline-flex;
+    align-items: center;
+    background-image: url('https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fRQr&operationContext=CHATTER&contentId=05Tg5000000xsO8');  
+    border: none;
+    padding: 10px 20px;
+    margin-left: 140px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    width: 250px;
+}
+
+.tree-categories{
+    margin-left: 140px;
+    border-radius: 20px;
+    background-image: url('https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Jpg&versionId=068g5000000fRQr&operationContext=CHATTER&contentId=05Tg5000000xsO8'); 
+    width: fit-content;
+    width: 250px;
+    font-size: 20px;
+    font-family: Georgia;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.content-to-hide {
+    display: none;
+    margin-top: 10px;
+    border-top: 1px solid white;
+}
+
+.list{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.list:hover {
+    opacity: 0.6;
+}
+
+.categories-style{
+    font-size: 30px;
+    font-family: Georgia;
+    font-weight: bold;
+    margin: 0;
+    width: fit-content;
+}

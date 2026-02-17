@@ -1,0 +1,14 @@
+<template>
+    <c-search-component></c-search-component>
+    <div class="main-wrapper">
+        <c-categories></c-categories>
+        <div class="container">
+            <img src="https://orgfarm-1e56e6150f-dev-ed.develop.file.force.com/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_Png&versionId=068g5000000fUzp&operationContext=CHATTER&contentId=05Tg5000000xywD" class="sale">
+        </div>
+    </div>
+    <c-recently-viewed></c-recently-viewed>
+    <c-login-side-bar onjoinclicked={openModalJoin} onsigninclicked={openModalSign}></c-login-side-bar>
+    <c-sign-in-modal show-sign-in-modal={isSignModalOpen} onclosesignin={closeSignModal}></c-sign-in-modal>
+    <c-join-modal show-join-modal={isJoinModalOpen} onclosejoin={closeJoinModal}></c-join-modal>
+    <c-footer-container></c-footer-container>
+</template>

@@ -1,0 +1,21 @@
+.sale-between{
+    position: absolute;
+    top: 235px;
+    right: 220px;
+}
+
+.scrollable-container {
+    overflow-y: scroll;
+    height: 440px;
+    width: auto;
+    margin-right: 190px;
+}
+
+.recently-style{
+    font-size: 20px;
+    font-family: Georgia;
+    font-weight: italic;
+    width: fit-content;
+    padding-top:10px;
+    padding-left:20px;
+}
