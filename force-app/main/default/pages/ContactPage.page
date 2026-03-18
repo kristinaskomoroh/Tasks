@@ -1,0 +1,17 @@
+<apex:page standardController="Contact" extensions="RedirectExtension">
+    <apex:form>
+        <apex:pageBlock title="Contacts summary">
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton action="{!redirectPage}" value="View all"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!Contact}" var="contact" >
+                <apex:column value="{!contact.Name}"/>
+                <apex:column value="{!contact.Email}"/>
+                <apex:column value="{!contact.Phone}"/>
+                <apex:column value="{!contact.Summary_price__c}"/>
+                <apex:column value="{!contact.Amount__c}"/>
+                <apex:column value="{!contact.Is_title_approved__c}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
