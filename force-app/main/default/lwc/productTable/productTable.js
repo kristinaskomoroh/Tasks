@@ -1,5 +1,5 @@
-import { LightningElement } from 'lwc'; 
-import getProducts from '@salesforce/apex/ProductTableController.getProducts'; 
+import { LightningElement, track } from 'lwc';
+import getProducts from '@salesforce/apex/ProductTableController.getProducts';
 import createProduct from '@salesforce/apex/ProductTableController.createProduct';
 import deleteProduct from '@salesforce/apex/ProductTableController.deleteProduct';
 import updateProduct from '@salesforce/apex/ProductTableController.updateProduct';
@@ -7,21 +7,20 @@ import updateProduct from '@salesforce/apex/ProductTableController.updateProduct
 
 
 export default class ProductTable extends LightningElement {
-   products = [];
+    @track products = [];
 
-   isModalOpen = false;
-   isDeleteModalOpen = false;
+    isModalOpen = false;
+    isDeleteModalOpen = false;
     isEditModalOpen = false;
     isLoading = false;
-    
+
     searchText = '';
     searchTimeout;
 
-    pagedProducts = [];
+    @track pagedProducts = [];
     newProduct = {};
     editProduct = {};
     productIdToDelete = null;
-    
 
     pageSize = 5;
     currentPage = 1;
@@ -34,7 +33,7 @@ export default class ProductTable extends LightningElement {
     get isLastPage() {
         return this.currentPage === this.totalPages;
     }
-    
+
 
     async connectedCallback() {
         this.isLoading = true;
@@ -44,7 +43,7 @@ export default class ProductTable extends LightningElement {
 
     openModal() {
         this.newProduct = {};
-        this.isModalOpen = true; 
+        this.isModalOpen = true;
     }
 
     closeModal() {
@@ -73,7 +72,7 @@ export default class ProductTable extends LightningElement {
 
 
     handleInputChange(event) {
-        this.newProduct[event.target.dataset.field] = event.target.value; 
+        this.newProduct[event.target.dataset.field] = event.target.value;
     }
 
     handleEditInputChange(event) {
@@ -81,7 +80,7 @@ export default class ProductTable extends LightningElement {
     }
 
     handleSearch(event) {
-        this.searchText = event.target.value; 
+        this.searchText = event.target.value;
         clearTimeout(this.searchTimeout);
 
         this.searchTimeout = setTimeout(async () => {
@@ -96,40 +95,38 @@ export default class ProductTable extends LightningElement {
         inputs.forEach(input => {
             input.reportValidity();
 
-    
+
             if (input.required && !input.value) {
                 isValid = false;
             }
-
-            
     if ((input.dataset.field === 'UnitPrice__c' && input.dataset.field === 'UnitsAvailable__c') &&
                 (input.value === '' || Number(input.value) <= 0)) {
                 input.setCustomValidity('Value must be greater than 0');
                 isValid = false;
-            }  
+            }
         });
         return isValid;
     }
 
     async confirmDelete() {
         if (!this.productIdToDelete) return;
-            this.products = await deleteProduct({ productId: this.productIdToDelete });
-            this.updatePagedProducts();
-            this.canselDelete();
+        this.products = await deleteProduct({ productId: this.productIdToDelete });
+        this.updatePagedProducts();
+        this.canselDelete();
     }
 
     async EditProduct() {
         if (!this.validateForm()) return;
-            this.products = await updateProduct({ product: this.editProduct });
-            this.updatePagedProducts();
-            this.closeEditModal();
+        this.products = await updateProduct({ product: this.editProduct });
+        this.updatePagedProducts();
+        this.closeEditModal();
     }
 
     async saveProduct() {
         if (!this.validateForm()) return;
-            this.products = await createProduct({ product: this.newProduct });
-            this.updatePagedProducts();
-            this.closeModal();
+        this.products = await createProduct({ product: this.newProduct });
+        this.updatePagedProducts();
+        this.closeModal();
     }
 
     async loadProducts(searchText) {
@@ -137,11 +134,12 @@ export default class ProductTable extends LightningElement {
         this.totalPages = Math.ceil(this.products.length / this.pageSize);
         this.currentPage = 1;
         this.updatePagedProducts();
-}
+    }
 
     updatePagedProducts() {
-        const startIndex = (this.currentPage - 1) * this.pageSize;
-        const endIndex = startIndex + this.pageSize;
+        const size = Number(this.pageSize);
+        const startIndex = (this.currentPage - 1) * size;
+        const endIndex = startIndex + size;
         this.pagedProducts = [...this.products.slice(startIndex, endIndex)];
     }
 
@@ -169,25 +167,24 @@ export default class ProductTable extends LightningElement {
     ];
     }
 
-
     handlePageSizeChange(event) {
-    this.pageSize = 5;
-    this.pageSize = parseInt(event.detail.value, 10);
-    this.currentPage = 1; 
-    this.updatePagedProducts();
-}
+        this.pageSize = event.detail.value;
+        const numericValue = Number(this.pageSize);
+        this.totalPages = Math.ceil(this.products.length / numericValue);
+        this.currentPage = 1;
+        this.updatePagedProducts();
+    }
 
     handleJumpToPage(event) {
-    const page = parseInt(event.target.value, 10);
-    this.totalPages = Math.ceil(this.products.length / this.pageSize);
-    if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-        this.updatePagedProducts();
+        const page = parseInt(event.target.value, 10);
+        this.totalPages = Math.ceil(this.products.length / this.pageSize);
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+            this.updatePagedProducts();
+        }
+        else if(page > this.totalPages){
+            this.currentPage = this.totalPages;
+            this.updatePagedProducts();
+        }
     }
-    else if(page > this.totalPages){
-        this.currentPage = this.totalPages;
-        this.updatePagedProducts();
-    }
-}
-
 }

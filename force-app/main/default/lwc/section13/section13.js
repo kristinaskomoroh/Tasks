@@ -77,11 +77,13 @@ export default class Section13 extends LightningElement {
     }
 
     compareValues(param1, param2){
+        const isNum1 = !NaN(param1) && param1 !== '' && param1 !== null;
+        const isNum2 = !NaN(param2) && param2 !== '' && param2 !== null;
+        if(isNum1 && isNum2){
+            return Math.max(Number(param1), Number(param2));
+        }
         if(typeof param1 === 'string' && typeof param2 === 'string'){
             return param1.length >= param2.length ? param1 : param2;
-        }
-        if(typeof param1 === 'number' && typeof param2 === 'number'){
-            return Math.max(param1, param2);
         }
     }
 }
