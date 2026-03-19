@@ -2,22 +2,59 @@ import { LightningElement, wire, track } from 'lwc';
 import getAllObjects from '@salesforce/apex/ObjectSchemaController.getAllObjects';
 import getObjectFields from '@salesforce/apex/ObjectSchemaController.getObjectFields';
 import executeSOQL from '@salesforce/apex/ObjectSchemaController.executeSOQL';
+import SoqlLabel from '@salesforce/label/c.SoqlLabel';
+import SoqlBodyLabel from '@salesforce/label/c.SoqlBodyLabel';
+import ChooseAnObjectLabel from '@salesforce/label/c.ChooseAnObjectLabel';
+import EnterTheNameLabel from '@salesforce/label/c.EnterTheNameLabel';
+import SelectFieldsLabel from '@salesforce/label/c.SelectFieldsLabel';
+import AvailableLable from '@salesforce/label/c.AvailableLable';
+import SelectedLable from '@salesforce/label/c.SelectedLable';
+import AddFilterLabel from '@salesforce/label/c.AddFilterLabel';
+import FieldLabel from '@salesforce/label/c.FieldLabel';
+import OperatorLabel from '@salesforce/label/c.OperatorLabel';
+import ValueLabel from '@salesforce/label/c.ValueLabel';
+import EnterLimitLabel from '@salesforce/label/c.EnterLimitLabel';
+import EnterOffsetLabel from '@salesforce/label/c.EnterOffsetLabel';
+import GenerateQueryLabel from '@salesforce/label/c.GenerateQueryLabel';
+import EditGeneratedSOQLLabel from '@salesforce/label/c.EditGeneratedSOQLLabel';
+import ExecuteQueryLabel from '@salesforce/label/c.ExecuteQueryLabel';
+import NoRecordsLabel from '@salesforce/label/c.NoRecordsLabel';
+
 
 export default class Section14 extends LightningElement {
     @track objectOptions = [];
     @track fieldOptions = [];
-    @track finalQuery = '';
-    @track whereField = '';
-    @track whereOperator = '=';
-    @track whereValue = '';
-    @track limitValue = 0;
-    @track offsetValue = 0;
+    finalQuery = '';
+    whereField = '';
+    whereOperator = '=';
+    whereValue = '';
+    limitValue = 0;
+    offsetValue = 0;
     @track queryData = [];
     @track columns = [];
-    @track isInvalidLimit = false;
-    @track emptyMessage = false;
+    isInvalidLimit = false;
+    emptyMessage = false;
     selectedObject = '';
-    selectedFields = [];
+    @track selectedFields = [];
+    labels = {
+        SoqlLabel,
+        SoqlBodyLabel,
+        ChooseAnObjectLabel,
+        EnterTheNameLabel,
+        SelectFieldsLabel,
+        AvailableLable,
+        SelectedLable,
+        AddFilterLabel,
+        FieldLabel,
+        OperatorLabel,
+        ValueLabel,
+        EnterLimitLabel,
+        EnterOffsetLabel,
+        GenerateQueryLabel,
+        EditGeneratedSOQLLabel,
+        ExecuteQueryLabel,
+        NoRecordsLabel,
+    };
 
     get operatorOptions() {
         return [
@@ -32,7 +69,7 @@ export default class Section14 extends LightningElement {
     @wire (getAllObjects)
     wiredObjectList({error, data}){
         if(data){
-            this.objectOptions = [...data].sort((a,b) => 
+            this.objectOptions = [...data].sort((a,b) =>
                 a.label.localeCompare(b.label)
             );
         if(error){
@@ -61,8 +98,8 @@ export default class Section14 extends LightningElement {
     handleOperatorChange(event) { this.whereOperator = event.detail.value; }
     handleWhereValueChange(event) { this.whereValue = event.detail.value; }
 
-    handleLimitChange(event) { 
-        this.limitValue = event.detail.value; 
+    handleLimitChange(event) {
+        this.limitValue = event.detail.value;
     }
 
     handleOffsetChange(event) { this.offsetValue = event.detail.value; }

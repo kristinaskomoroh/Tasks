@@ -1,17 +1,24 @@
 import { LightningElement, api, track } from 'lwc';
+import NextLabel from '@salesforce/label/c.NextLabel';
+import PrevLabel from '@salesforce/label/c.PrevLabel';
 
 export default class SoqlResult extends LightningElement {
     @api queryResult = '';
     @track visibleData = [];
-    @track sortedBy;
-    @track sortedDirection = 'asc';
-    internalData = [];
+    sortedBy;
+    sortedDirection = 'asc';
+    @track internalData = [];
 
     currentPage = 1;
     pageSize = 5;
     totalPages = 1;
 
-    @api 
+    labels = {
+        NextLabel,
+        PrevLabel
+    }
+
+    @api
     get data() {
         return this.internalData;
     }
@@ -20,11 +27,11 @@ export default class SoqlResult extends LightningElement {
         if (value) {
             this.internalData = value;
             this.totalPages = Math.ceil(value.length / this.pageSize) || 1;
-            this.currentPage = 1; 
+            this.currentPage = 1;
             this.updatePagedRecords();
         }
     }
-    
+
     get isFirstPage() {
         return this.currentPage === 1;
     }
@@ -52,8 +59,7 @@ export default class SoqlResult extends LightningElement {
             this.updatePagedRecords();
         }
     }
-    
-    
+
     get columns() {
         if (this.data && this.data.length > 0) {
             return Object.keys(this.data[0]).map(key => {
