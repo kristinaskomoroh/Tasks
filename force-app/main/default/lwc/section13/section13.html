@@ -1,0 +1,14 @@
+<template>
+    <div class="container">
+        <lightning-card title="Current time in 3 different time zones" class="style" onmouseenter={handleMouseEnter} onmouseleave={handleMouseLeave}>
+            <div class="slds-p-around_medium times">
+                <p>New York (EST/EDT):{time1}</p>
+                <p>London (GMT):{time2}</p>
+                <p>Tokyo (CET):{time3}</p>
+            </div>
+        </lightning-card>
+    </div>
+    <c-coin-simulator>loading={isLoading} result={coinResult}</c-coin-simulator>
+    <c-phone-number></c-phone-number>
+    <c-account-search></c-account-search>
+</template>

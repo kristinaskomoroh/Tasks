@@ -1,0 +1,11 @@
+<template>
+    <lightning-input
+        type="tel"
+        label="Enter Phone Number"
+        pattern="^[\d\s\-\(\)\+]{13,17}$"
+        class="phone"
+        placeholder="+375(__)___-__-__"
+        message-when-pattern-mismatch="Enter a validate phone number"
+        onchange={handlePhoneNumber}>
+    </lightning-input>
+</template>

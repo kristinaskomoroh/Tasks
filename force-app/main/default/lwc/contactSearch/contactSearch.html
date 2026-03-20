@@ -1,0 +1,11 @@
+<template>
+    <template for:each={searchResult} for:item="wrap">
+        <div key={wrap.accName} class="slds-box slds-m-bottom_small">
+            <p><b>Account: {wrap.accName}</b></p>
+            <p><b>Contacts:</b></p>
+            <template for:each={wrap.contactNames} for:item="con">
+                <span key={con} class="slds-badge">{con}</span>
+            </template>
+        </div>
+    </template>
+</template>
