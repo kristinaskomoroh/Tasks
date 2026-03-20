@@ -17,7 +17,7 @@ export default class ProductTable extends LightningElement {
     searchText = '';
     searchTimeout;
 
-    @track pagedProducts = [];
+    pagedProducts = [];
     newProduct = {};
     editProduct = {};
     productIdToDelete = null;
