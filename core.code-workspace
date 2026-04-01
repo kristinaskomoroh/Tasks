@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "path": "c:/Users/kskomoroh/Desktop/Warehouses"
+    }
+  ],
+  "settings": {
+    "eslint.workingDirectories": [
+      "c:/Users/kskomoroh/Desktop/Warehouses"
+    ],
+    "eslint.validate": [
+      "javascript",
+      "typescript"
+    ],
+    "eslint.options": {
+      "overrideConfigFile": "c:\\Users\\kskomoroh\\Desktop\\Warehouses\\.eslintrc.json"
+    }
+  }
+}
