@@ -1,0 +1,14 @@
+<template>
+     <template if:true={data.length}>
+        <div class="slds-m-top_medium" style="background: white; border-radius: 10px; padding: 10px;">
+            <lightning-datatable key-field="Id" data={visibleData} columns={columns} hide-checkbox-column onsort={handleSort} sorted-by={sortedBy} sorted-direction={sortDirection}></lightning-datatable>
+        </div>
+         <div class="slds-m-top_medium slds-grid slds-grid_align-center">
+            <lightning-button label={labels.PrevLabel} onclick={prevPage} disabled={isFirstPage}></lightning-button>
+            <span class="slds-p-horizontal_small">
+                Page {currentPage} of {totalPages}
+            </span>
+            <lightning-button label={labels.NextLabel} onclick={nextPage} disabled={isLastPage}></lightning-button>
+        </div>
+    </template>
+</template>
