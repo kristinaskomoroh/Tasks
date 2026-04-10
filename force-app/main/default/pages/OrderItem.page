@@ -1,0 +1,9 @@
+<apex:page standardController="Order" extensions="OrderItemExtension">
+    <apex:pageBlock title="Order Products">
+        <apex:pageBlockTable value="{!items}" var="item">
+            <apex:column value="{!item.Product2Id}"/>
+            <apex:column value="{!item.Quantity}"/>
+            <apex:column value="{!item.UnitPrice}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>
