@@ -2,12 +2,12 @@
     <lightning-quick-action-panel header={headerText}>
         <template if:true={isConfirmStep}>
             <div class="slds-text-align_center slds-p-around_medium slds-text-heading_small">
-                Do you consent to the processing of the current participant`s data?
+                {labels.FirstModalLabel}
             </div>
         </template>
         <template if:true={isEnterNumberStep}>
             <div class="slds-text-align_center slds-p-around_medium slds-text-heading_small">
-                Please, enter the debitor number
+                {labels.EnterNumberLabel}
             </div>
             <lightning-input
                 type="text"
@@ -25,7 +25,7 @@
                 onload={handleFormLoad}>
                 <lightning-messages></lightning-messages>
                 <div class="slds-form-element slds-form-element_stacked slds-m-vertical_x-small">
-                    <span class="slds-form-element__label">Order Name</span>
+                    <span class="slds-form-element__label">{labels.OrderNameLabel}</span>
                     <div class="slds-form-element__control">
                         <lightning-formatted-url
                             value={orderUrl}

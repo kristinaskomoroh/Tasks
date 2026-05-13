@@ -4,7 +4,6 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { CloseActionScreenEvent } from 'lightning/actions';
 import LightningConfirm from 'lightning/confirm';
 import getOrder from '@salesforce/apex/OrderController.getOrder';
-import { refreshApex } from '@salesforce/apex';
 
 import SaveLabel from '@salesforce/label/c.SaveLabel';
 import CancelLabel from '@salesforce/label/c.CancelLabel';
@@ -20,6 +19,9 @@ import ToastMessageStatusLabel from '@salesforce/label/c.ToastMessageStatusLabel
 import ErrorLabel from '@salesforce/label/c.ErrorLabel';
 import ToastMessageFormLabel from '@salesforce/label/c.ToastMessageFormLabel';
 import ToastMessageNumberLabel from '@salesforce/label/c.ToastMessageNumberLabel';
+import FirstModalLabel from '@salesforce/label/c.FirstModalLabel';
+import EnterNumberLabel from '@salesforce/label/c.EnterNumberLabel';
+import OrderNameLabel from '@salesforce/label/c.OrderNameLabel';
 
 
 
@@ -54,12 +56,14 @@ export default class ParticipantConfirmationAction extends LightningElement {
         ToastMessageStatusLabel,
         ErrorLabel,
         ToastMessageFormLabel,
-        ToastMessageNumberLabel
+        ToastMessageNumberLabel,
+        FirstModalLabel,
+        EnterNumberLabel,
+        OrderNameLabel
     }
 
     @wire(getOrder, { recordId: "$recordId" })
     wiredOrder({data, error}){
-        this.wiredOrderResult = data;
         if(data){
             this.order = data.order;
             this.isPreregistered = data.isEntryPreregistered;
@@ -105,7 +109,6 @@ export default class ParticipantConfirmationAction extends LightningElement {
                 });
             if(!result) return;
             await this.updateEntryStatus();
-            await refreshApex(this.wiredOrderResult);
             this.isPreregistered = false;
             this.isFixed = true;
         }catch(error){
@@ -189,7 +192,6 @@ export default class ParticipantConfirmationAction extends LightningElement {
                 fields['Debitor_number__c'] = this.enteredNumber;
                 const recordInput = {fields};
                 await updateRecord(recordInput);
-                await refreshApex(this.wiredOrderResult);
                 this.showToast(this.labels.SuccessLabel, this.labels.ToastMessageNumberLabel, this.labels.SuccessLabel);
             }
         }catch(error){
