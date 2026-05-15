@@ -1,4 +1,4 @@
-import { LightningElement, api, wire} from 'lwc';
+import { LightningElement, api} from 'lwc';
 import { updateRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { CloseActionScreenEvent } from 'lightning/actions';
