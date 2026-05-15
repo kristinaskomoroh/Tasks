@@ -22,25 +22,22 @@ import ToastMessageNumberLabel from '@salesforce/label/c.ToastMessageNumberLabel
 import FirstModalLabel from '@salesforce/label/c.FirstModalLabel';
 import EnterNumberLabel from '@salesforce/label/c.EnterNumberLabel';
 import OrderNameLabel from '@salesforce/label/c.OrderNameLabel';
+import ErrorMessageLabel from '@salesforce/label/c.ErrorMessageLabel';
 
 
 
 
 export default class ParticipantConfirmationAction extends LightningElement {
-    @api recordId;
+    _recordId;
     @api objectApiName;
-    order;
     orderName;
-    targetEntryStatus;
-    targetOrderStatus;
     debitorNum;
     contactId;
     enteredNumber = '';
     entryToUpdate = null;
-    isPreregistered = false;
-    isFixed = false;
     isEditingMode = false;
     isLoading = true;
+    wiredData;
 
     labels = {
         SaveLabel,
@@ -59,41 +56,46 @@ export default class ParticipantConfirmationAction extends LightningElement {
         ToastMessageNumberLabel,
         FirstModalLabel,
         EnterNumberLabel,
-        OrderNameLabel
+        OrderNameLabel,
+        ErrorMessageLabel
     }
 
-    @wire(getOrder, { recordId: "$recordId" })
-    wiredOrder({data, error}){
-        if(data){
-            this.order = data.order;
-            this.isPreregistered = data.isEntryPreregistered;
-            this.isFixed = data.isEntryFixed;
-            this.targetEntryStatus = data.entryChangedStatus;
-            this.targetOrderStatus = data.orderChangedStatus;
-            this.entryToUpdate = data.order.Ticket__c;
-            this.debitorNum = data.order.Applicant__r.Debitor_number__c;
-            this.contactId = data.order.Applicant__c;
-            this.orderName = data.order.Name;
-            console.log('Data from wrapper ', data);
-        }else if (error){
-            const errorMsg = error?.body?.output?.errors?.[0]?.message
-                      || error?.body?.message
-                      || error?.message
-                      || 'An error occurred';
-            this.showToast(this.labels.ErrorLabel, errorMsg, this.labels.ErrorLabel);
+    @api
+    set recordId(value) {
+        this._recordId = value;
+        if (value) {
+            this.loadData();
         }
     }
 
+    get recordId() {
+        return this._recordId;
+    }
+
+    loadData() {
+        getOrder({recordId: this.recordId})
+            .then(result => {
+                this.wiredData = result;
+                this.entryToUpdate = this.wiredData.order?.Ticket__c;
+                this.debitorNum = this.wiredData.order?.Applicant__r?.Debitor_number__c;
+                this.contactId = this.wiredData.order?.Applicant__c;
+                this.orderName = this.wiredData.order?.Name;
+            })
+            .catch(error => {
+                this.handleError(error);
+            });
+    }
+
     get isConfirmStep() {
-        return this.isPreregistered;
+        return this.wiredData?.isEntryPreregistered;
     }
 
     get isEnterNumberStep() {
-        return !this.debitorNum && this.isFixed;
+        return !this.debitorNum && this.wiredData?.isEntryFixed;
     }
 
     get isEditFormStep() {
-        return !!this.debitorNum && this.isFixed;
+        return !!this.debitorNum && this.wiredData?.isEntryFixed;
     }
 
     get orderUrl(){
@@ -109,25 +111,21 @@ export default class ParticipantConfirmationAction extends LightningElement {
                 });
             if(!result) return;
             await this.updateEntryStatus();
-            this.isPreregistered = false;
-            this.isFixed = true;
         }catch(error){
-            const errorMsg = error?.body?.output?.errors?.[0]?.message
-                      || error?.body?.message
-                      || error?.message
-                      || 'An error occurred while updating the status.';
-            this.showToast(this.labels.ErrorLabel, errorMsg, this.labels.ErrorLabel);
+            this.handleError(error);
+        }finally{
+            this.loadData();
         }
     }
 
     async updateEntryStatus(){
         if(!this.entryToUpdate){
-            this.showToast(this.labels.ErrorLabel);
+            this.showToast(this.labels.ErrorLabel, this.labels.ErrorMessageLabel, this.labels.ErrorLabel);
             return;
         }
         const fields = {}
         fields['Id'] = this.entryToUpdate;
-        fields['Status__c'] = this.targetEntryStatus;
+        fields['Status__c'] = this.wiredData?.entryChangedStatus;
         const recordInput = {fields};
         await updateRecord(recordInput);
         this.showToast(this.labels.SuccessLabel, this.labels.ToastMessageStatusLabel, this.labels.SuccessLabel);
@@ -151,31 +149,20 @@ export default class ParticipantConfirmationAction extends LightningElement {
     }
 
     async handleForm(){
-        const form = this.template.querySelector('.my-form');
-        if(form){
-            try{
-                const confirmMessage = await LightningConfirm.open({
-                    message: this.labels.FormMessage,
-                    label: this.labels.ConfirmLabel,
-                    theme: this.labels.ConfirmTheme,
-                });
-                if(confirmMessage){
-                    const fieldsOrder = {Id: this.recordId, Ticket_status__c: this.targetOrderStatus};
-                    const fieldsContact = {Id: this.contactId, Debitor_number__c: this.enteredNumber};
-                    await Promise.all([
-                    updateRecord({fields: fieldsOrder}),
-                    updateRecord({fields: fieldsContact})
-                ])
+        try{
+            const confirmMessage = await LightningConfirm.open({
+                message: this.labels.FormMessage,
+                label: this.labels.ConfirmLabel,
+                theme: this.labels.ConfirmTheme,
+            });
+            if(confirmMessage){
+                const fieldsOrder = {Id: this.recordId, Ticket_status__c: this.wiredData?.orderChangedStatus};
+                await updateRecord({fields: fieldsOrder}),
                 this.showToast(this.labels.SuccessLabel, this.labels.ToastMessageFormLabel, this.labels.SuccessLabel);
                 this.dispatchEvent(new CloseActionScreenEvent());
-                }
-            }catch(error){
-                const errorMsg = error?.body?.output?.errors?.[0]?.message
-                        || error?.body?.message
-                        || error?.message
-                        || 'An error occurred while saving data';
-                this.showToast(this.labels.ErrorLabel, errorMsg, this.labels.ErrorLabel);
             }
+        }catch(error){
+            this.handleError(error);
         }
     }
 
@@ -195,11 +182,9 @@ export default class ParticipantConfirmationAction extends LightningElement {
                 this.showToast(this.labels.SuccessLabel, this.labels.ToastMessageNumberLabel, this.labels.SuccessLabel);
             }
         }catch(error){
-            const errorMsg = error?.body?.output?.errors?.[0]?.message
-                      || error?.body?.message
-                      || error?.message
-                      || 'An error occurred';
-            this.showToast(this.labels.ErrorLabel, errorMsg, this.labels.ErrorLabel);
+            this.handleError(error);
+        }finally{
+            this.loadData();
         }
     }
 
@@ -215,6 +200,14 @@ export default class ParticipantConfirmationAction extends LightningElement {
         if(this.isConfirmStep) this.handleConfirm();
         if(this.isEditFormStep) this.handleForm();
         if(this.isEnterNumberStep) this.handleNumber();
+    }
+
+    handleError(error){
+        const errorMsg = error?.body?.output?.errors?.[0]?.message
+                      || error?.body?.message
+                      || error?.message
+                      || this.labels.ErrorMessageLabel;
+        this.showToast(this.labels.ErrorLabel, errorMsg, this.labels.ErrorLabel);
     }
 
     confirmEdit() {

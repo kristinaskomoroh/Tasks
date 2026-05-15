@@ -8,7 +8,7 @@ public with sharing class OrderController {
         @AuraEnabled public String orderChangedStatus;
     }
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static OrderWrapper getOrder(Id recordId) {
         OrderWrapper wrapper = new OrderWrapper();
 
