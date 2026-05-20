@@ -20,11 +20,11 @@ export default class ParticipantScreenFlow extends LightningElement {
         OrderNameLabel
     }
 
+    @api
     get debitorNum() {
         return this._debitorNum;
     }
 
-    @api
     set debitorNum(value) {
         this._debitorNum = value;
         if (!this.isEditingMode) {
