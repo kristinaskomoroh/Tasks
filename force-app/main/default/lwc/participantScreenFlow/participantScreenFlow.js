@@ -3,13 +3,14 @@ import { getRecord} from 'lightning/uiRecordApi';
 import { FlowAttributeChangeEvent } from 'lightning/flowSupport';
 
 import OrderNameLabel from '@salesforce/label/c.OrderNameLabel';
+import DebitorNumberLabel from '@salesforce/label/c.DebitorNumberLabel';
 
 import DEBITOR_NUMBER from '@salesforce/schema/Order.Applicant__r.Debitor_number__c';
+import ORDER_NUMBER from '@salesforce/schema/Order.OrderNumber';
 
 export default class ParticipantScreenFlow extends LightningElement {
     @api recordId;
-    @api orderName
-    _debitorNum;
+    @api debitorNum;
 
     isLoading = true;
     isEditingMode = false;
@@ -17,30 +18,17 @@ export default class ParticipantScreenFlow extends LightningElement {
     draftValue;
 
     labels = {
-        OrderNameLabel
+        OrderNameLabel,
+        DebitorNumberLabel
     }
 
-    @api
-    get debitorNum() {
-        return this._debitorNum;
-    }
-
-    set debitorNum(value) {
-        this._debitorNum = value;
-        if (!this.isEditingMode) {
-            this.draftValue = value || '';
-        }
-    }
-
-    @wire(getRecord, {recordId: '$recordId', fields: DEBITOR_NUMBER})
-    wiredOrder({data, error}) {
-        if (data) {
-            if (!this._debitorNum) {
-                this._debitorNum = data.fields?.Applicant__r?.value?.fields?.Debitor_number__c?.value || '';
-                this.dispatchEvent(new FlowAttributeChangeEvent('debitorNum', this._debitorNum));
-            }
-        } else if (error) {
-            this.handleError(error);
+    @wire(getRecord, {recordId: '$recordId', fields: [DEBITOR_NUMBER, ORDER_NUMBER]})
+    wiredOrder({data, error}){
+        if(data){
+            this.debitorNum = data.fields?.Applicant__r?.value?.fields?.Debitor_number__c?.value || '';
+            this.orderName = data.fields?.OrderNumber?.value || '';
+        }else if(error){
+            this.handleError();
         }
     }
 
@@ -57,18 +45,18 @@ export default class ParticipantScreenFlow extends LightningElement {
     }
 
     confirmEdit() {
-        this._debitorNum = this.draftValue;
+        this.debitorNum = this.draftValue;
         this.isEditingMode = false;
-        this.dispatchEvent(new FlowAttributeChangeEvent('debitorNum', this._debitorNum));
+        this.dispatchEvent(new FlowAttributeChangeEvent('debitorNum', this.debitorNum));
     }
 
     cancelEdit() {
-        this.draftValue = this._debitorNum;
+        this.draftValue = this.debitorNum;
         this.isEditingMode = false;
     }
 
     enableEditMode(){
-        this.draftValue = this._debitorNum;
+        this.draftValue = this.debitorNum;
         this.isEditingMode = true;
     }
 
@@ -78,5 +66,9 @@ export default class ParticipantScreenFlow extends LightningElement {
                       || error?.message
                       || this.labels.ErrorMessageLabel;
         this.showToast(this.labels.ErrorLabel, errorMsg, this.labels.ErrorLabel);
+    }
+
+    showToast(title, message, variant) {
+        this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
     }
 }

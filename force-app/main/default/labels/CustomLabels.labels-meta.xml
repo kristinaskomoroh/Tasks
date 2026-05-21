@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+        <fullName>CancelLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>CancelLabel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
+        <fullName>ConfirmLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ConfirmLabel</shortDescription>
+        <value>Confirm message</value>
+    </labels>
+    <labels>
+        <fullName>ConfirmTheme</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ConfirmTheme</shortDescription>
+        <value>warning</value>
+    </labels>
+    <labels>
+        <fullName>DebitorNumberLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>DebitorNumberLabel</shortDescription>
+        <value>Debitor number</value>
+    </labels>
+    <labels>
+        <fullName>DebitorNumberMessage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>DebitorNumberMessage</shortDescription>
+        <value>Are you sure you want to save the debitor number?</value>
+    </labels>
+    <labels>
+        <fullName>ErrorLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ErrorLabel</shortDescription>
+        <value>Error</value>
+    </labels>
+    <labels>
+        <fullName>ErrorMessageLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ErrorMessageLabel</shortDescription>
+        <value>An error occurred</value>
+    </labels>
+    <labels>
+        <fullName>FirstModalLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>FirstModalLabel</shortDescription>
+        <value>Do you consent to the processing of the current participant`s data?</value>
+    </labels>
+    <labels>
+        <fullName>FormMessage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>FormMessage</shortDescription>
+        <value>Are you sure you want to save the form?</value>
+    </labels>
+    <labels>
+        <fullName>InformationalLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>InformationalLabel</shortDescription>
+        <value>Informational text message</value>
+    </labels>
+    <labels>
+        <fullName>InformationalTheme</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>InformationalTheme</shortDescription>
+        <value>inverse</value>
+    </labels>
+    <labels>
+        <fullName>OrderNameLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>OrderNameLabel</shortDescription>
+        <value>Order Name</value>
+    </labels>
+    <labels>
+        <fullName>Participant_status_message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Participant status message</shortDescription>
+        <value>By clicking the &quot;Ok&quot; button, you agree to change the participant`s status to &quot;Fixed&quot;.</value>
+    </labels>
+    <labels>
+        <fullName>SaveLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SaveLabel</shortDescription>
+        <value>Save</value>
+    </labels>
+    <labels>
+        <fullName>SuccessLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SuccessLabel</shortDescription>
+        <value>Success</value>
+    </labels>
+    <labels>
+        <fullName>ToastMessageFormLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ToastMessageFormLabel</shortDescription>
+        <value>Participant`s form was saved</value>
+    </labels>
+    <labels>
+        <fullName>ToastMessageNumberLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ToastMessageNumberLabel</shortDescription>
+        <value>Participant`s debitor number was saved</value>
+    </labels>
+    <labels>
+        <fullName>ToastMessageStatusLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ToastMessageStatusLabel</shortDescription>
+        <value>Participant`s status was changed</value>
+    </labels>
+    <labels>
+        <fullName>EnterNumberLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>EnterNumberLabel</shortDescription>
+        <value>Please, enter the debitor number</value>
+    </labels>
+</CustomLabels>

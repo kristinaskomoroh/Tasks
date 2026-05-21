@@ -25,7 +25,7 @@
             </template>
             <template if:false={isEditingMode}>
                 <div class="slds-form-element slds-form-element_stacked slds-m-vertical_x-small">
-                    <span class="slds-form-element__label">Debitor number</span>
+                    <span class="slds-form-element__label">{labels.DebitorNumberLabel}</span>
                     <div class="slds-form-element__control">
                         <div class="slds-grid slds-grid_vertical-align-center">
                             <div class="slds-form-element__static">
@@ -47,7 +47,7 @@
             <template if:true={isEditingMode}>
                 <lightning-input
                     type="text"
-                    label="Debitor number"
+                    label={labels.DebitorNumberLabel}
                     value={draftValue}
                     onchange={handleNumberChange}>
                 </lightning-input>

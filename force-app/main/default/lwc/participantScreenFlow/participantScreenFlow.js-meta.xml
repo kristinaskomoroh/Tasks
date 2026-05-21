@@ -9,8 +9,7 @@
     <targetConfigs>
         <targetConfig targets="lightning__FlowScreen">
             <property name="recordId" type="String" role="inputOnly"/>
-            <property name="debitorNum" type="String"/>
-            <property name="orderName" type="String" role="inputOnly"/>
+            <property name="debitorNum" type="String" role="outputOnly"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
