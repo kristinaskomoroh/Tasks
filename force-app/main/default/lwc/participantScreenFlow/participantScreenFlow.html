@@ -1,0 +1,73 @@
+<template>
+    <lightning-record-view-form
+        record-id={recordId}
+        object-api-name="Order"
+        onload={handleFormLoad}>
+        <lightning-messages></lightning-messages>
+        <div class="slds-form-element slds-form-element_stacked slds-m-vertical_x-small">
+            <span class="slds-form-element__label">{labels.OrderNameLabel}</span>
+            <div class="slds-form-element__control">
+                <lightning-formatted-url
+                    value={orderUrl}
+                    label={orderName}
+                    target="_blank">
+                </lightning-formatted-url>
+            </div>
+        </div>
+        <div class="slds-m-vertical_medium slds-border_bottom"></div>
+        <lightning-output-field field-name="Ticket_status__c"></lightning-output-field>
+    </lightning-record-view-form>
+
+    <div class="slds-m-vertical_medium slds-border_bottom"></div>
+
+        <div class="slds-is-relative"> <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+            </template>
+            <template if:false={isEditingMode}>
+                <div class="slds-form-element slds-form-element_stacked slds-m-vertical_x-small">
+                    <span class="slds-form-element__label">{labels.DebitorNumberLabel}</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-form-element__static">
+                                {debitorNum}
+                            </div>
+                            <div class="slds-m-left_x-small">
+                                <lightning-button-icon
+                                    icon-name="utility:edit"
+                                    variant="bare"
+                                    onclick={enableEditMode}
+                                    data-id={debitorNum}
+                                    alternative-text="Edit">
+                                </lightning-button-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template if:true={isEditingMode}>
+                <lightning-input
+                    type="text"
+                    label={labels.DebitorNumberLabel}
+                    value={draftValue}
+                    onchange={handleNumberChange}>
+                </lightning-input>
+                <div class="slds-grid slds-grid_vertical-align-end">
+                    <div class="slds-col slds-size_9-of-10"></div>
+                    <lightning-button-icon
+                        icon-name="utility:check"
+                        variant="brand"
+                        onclick={confirmEdit}
+                        class="slds-m-right_xx-small"
+                        alternative-text="Confirm">
+                    </lightning-button-icon>
+
+                    <lightning-button-icon
+                        icon-name="utility:close"
+                        variant="destructive"
+                        onclick={cancelEdit}
+                        alternative-text="Cancel">
+                    </lightning-button-icon>
+                </div>
+            </template>
+        </div>
+</template>
