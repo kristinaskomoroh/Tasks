@@ -1,8 +1,15 @@
 public with sharing class BulkXMLGenerator implements Queueable {
     private List<XMLGenerator.FlowInput> inputs;
+    private Integer runNumber;
 
     public BulkXMLGenerator(List<XMLGenerator.FlowInput> inputs){
         this.inputs = inputs;
+        this.runNumber = 1;
+    }
+
+    public BulkXMLGenerator(List<XMLGenerator.FlowInput> inputs, Integer runNumber){
+        this.inputs = inputs;
+        this.runNumber = runNumber;
     }
 
     public void execute(QueueableContext context){
@@ -39,6 +46,7 @@ public with sharing class BulkXMLGenerator implements Queueable {
                 AND IndividualCompensationTotal__c > 0
                 AND Contact__r.IBANAccountOwner__c != null
                 AND Status__c = 'Participation'
+                LIMIT 2000
                 ]){
                 if(vol.Contact__r != null && vol.Contact__r.IBAN__c != null){
                     if (!shiftToVolunteersMap.containsKey(vol.VolunteerShift__c)) {
@@ -71,6 +79,9 @@ public with sharing class BulkXMLGenerator implements Queueable {
                 if(!updatedShifts.isEmpty()){
                     update updatedShifts;
                 }
+                if(runNumber < 6){
+                    System.enqueueJob(new BulkXMLGenerator(this.inputs, runNumber + 1));
+                }
         }catch(Exception e){ 
             System.debug('Background generation error: ' + e.getMessage());
         }       
@@ -80,6 +91,7 @@ public with sharing class BulkXMLGenerator implements Queueable {
     Boolean toggleFirst, Boolean toggleSecond, List<Volunteer__c> updatedVolunteers, List<VolunteerShift__c> updatedShifts){
         String xmlString = '';
         if(currentEvent != null){
+            //for(Integer i = 0; i < 5; i++){
             DOM.Document doc = new DOM.Document();
 
             Export_Config__mdt config = Export_Config__mdt.getInstance('SEPA_Payments');
@@ -178,6 +190,7 @@ public with sharing class BulkXMLGenerator implements Queueable {
                 }
             xmlString = doc.toXmlString(); 
         }
+    //}
         return xmlString;
     }
     
@@ -209,4 +222,3 @@ public with sharing class BulkXMLGenerator implements Queueable {
     return cleanText;
     }
 }
-    
