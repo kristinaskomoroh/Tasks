@@ -12,7 +12,7 @@ public with sharing class XMLGenerator {
     @InvocableMethod
     public static List<FlowOutput> generateXML(List<FlowInput> inputs) {
         if(inputs != null && !inputs.isEmpty()) {
-            System.enqueueJob(new BulkXmlGenerator(inputs));
+            Database.executeBatch(new BulkXmlGenerator(inputs), 200);
         }
 
         List<FlowOutput> outputs = new List<FlowOutput>();
