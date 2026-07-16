@@ -2,12 +2,10 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
     private List<XMLGenerator.FlowInput> inputs;
     private List<String> globalXmlChunks = new List<String>();
 
-    private Map<Id, List<Volunteer__c>> shiftToVolunteersMap = new Map<Id, List<Volunteer__c>>();
-    private List<Volunteer__c> updatedVolunteers = new List<Volunteer__c>();
     private List<VolunteerShift__c> updatedShifts = new List<VolunteerShift__c>();
+    private List<Volunteer__c> updatedVolunteers = new List<Volunteer__c>();
     private List<ContentVersion> outputFiles = new List<ContentVersion>();
 
-    private Set<Id> processedContacts = new Set<Id>();
     private Integer totalCount = 0;
     private Decimal totalCompensations = 0;
 
@@ -20,103 +18,93 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
         for (XMLGenerator.FlowInput input : inputs){
             eventId.add(input.eventId);
         }
-        return Database.getQueryLocator([SELECT Id, Name, ShiftLeader__r.IBANAccountOwner__c, ShiftLeader__r.IBAN__c,
-                                                IndividualCompensationShiftLeader__c, DefaultCompensation__c,
-                                                CompensationTotalShiftLeader__c, ShiftLeader__c, ShiftLeader__r.Name, CompensationAndExpensesPayed__c
-                                        FROM VolunteerShift__c
-                                        WHERE Event__c IN: eventId
-                                        AND IsIBANPayment__c = true
-                                        AND CompensationTotalShiftLeader__c != null
-                                        AND CompensationTotalShiftLeader__c > 0
-                                        AND ShiftLeader__r.IBANAccountOwner__c != null]);
+        return Database.getQueryLocator([SELECT Name,
+                                                IndividualCompensationTotal__c,
+                                                CompensationAndExpensesPayed__c,
+                                                Contact__r.IBAN__c,
+                                                Contact__r.IBANAccountOwner__c,
+                                                VolunteerShift__r.Id,
+                                                VolunteerShift__c,
+                                                VolunteerShift__r.Name,
+                                                VolunteerShift__r.CompensationTotalShiftLeader__c,
+                                                VolunteerShift__r.ShiftLeader__r.IBANAccountOwner__c,
+                                                VolunteerShift__r.ShiftLeader__r.IBAN__c,
+                                                VolunteerShift__r.ShiftLeader__c,
+                                                VolunteerShift__r.CompensationAndExpensesPayed__c,
+                                                VolunteerShift__r.DefaultCompensation__c,
+                                                VolunteerShift__r.IndividualCompensationShiftLeader__c
+                                        FROM Volunteer__c
+                                        WHERE VolunteerShift__r.Event__c IN :eventId
+                                        AND IndividualCompensationTotal__c != null
+                                        AND IndividualCompensationTotal__c > 0
+                                        AND Contact__r.IBANAccountOwner__c != null
+                                        AND Status__c = :DataHelper.VOLUNTEER_STATUS_PARTICIPATION
+                                        AND VolunteerShift__r.IsIBANPayment__c = true]);
     }
 
-    public void execute(Database.BatchableContext bc, List<VolunteerShift__c> scope){
+    public void execute(Database.BatchableContext bc, List<Volunteer__c> scope){
         try{
-            Set<Id> shiftIds = new Set<Id>();
-            for(VolunteerShift__c shift : scope) {
-                shiftIds.add(shift.Id);
+            List<String> currentScopeXml = new List<String>();
+            Boolean isCompensationAndExpensesStatusChanged = false;
+            Boolean isExportForAlreadyPaid = false;
+            if(this.inputs != null) {
+                isCompensationAndExpensesStatusChanged = this.inputs[0].isCompensationAndExpensesStatusChanged;
+                isExportForAlreadyPaid = this.inputs[0].isExportForAlreadyPaid;
             }
-        shiftToVolunteersMap = new Map<Id, List<Volunteer__c>>();
-        for (Volunteer__c vol : [
-            SELECT Id, Name, VolunteerShift__c, IndividualCompensationTotal__c, CompensationAndExpensesPayed__c, COntact__r.Name, Contact__r.IBAN__c, Contact__r.IBANAccountOwner__c
-            FROM Volunteer__c
-            WHERE VolunteerShift__c IN :shiftIds
-            AND VolunteerShift__r.IsIBANPayment__c = true
-            AND IndividualCompensationTotal__c != null
-            AND IndividualCompensationTotal__c > 0
-            AND Contact__r.IBANAccountOwner__c != null
-            AND Status__c = 'Participation'
-            ]){
-            if(vol.Contact__r != null && vol.Contact__r.IBAN__c != null){
-                if (!shiftToVolunteersMap.containsKey(vol.VolunteerShift__c)) {
-                    this.shiftToVolunteersMap.put(vol.VolunteerShift__c, new List<Volunteer__c>());
-                }
-                shiftToVolunteersMap.get(vol.VolunteerShift__c).add(vol);
-            }
-        }
-        List<String> currentScopeXml = new List<String>();
-        Boolean toggleFirst = false;
-        Boolean toggleSecond = false;
-        if(this.inputs != null) {
-            toggleFirst = this.inputs[0].toggleFirst;
-            toggleSecond = this.inputs[0].toggleSecond;
-        }
-        //for(Integer i = 0; i < 10; i++){
-            for(VolunteerShift__c shift: scope){
-                if (!(toggleSecond == false && shift.CompensationAndExpensesPayed__c == true)){
-                    String safeShiftName = newString(shift.ShiftLeader__r.Name);
-                    String finalShiftName = System.Label.PrefixForShiftLeaders + ' ' + safeShiftName;
-                    String shiftLeaderXml = addCommonBlocksToXML(shift.Id, shift.CompensationTotalShiftLeader__c, shift.ShiftLeader__r.IBANAccountOwner__c, shift.ShiftLeader__r.IBAN__c, finalShiftName);
+            //for(Integer i = 0; i < 10; i++){
+            for(Volunteer__c vol: scope){
+                Id currentShiftLeaderId = vol.VolunteerShift__c;
+                Boolean isLeaderValid = true;
+                if(String.isBlank(vol.VolunteerShift__r.ShiftLeader__r.IBAN__c)) isLeaderValid = false;
+                if(vol.VolunteerShift__r.CompensationTotalShiftLeader__c == 0 && vol.VolunteerShift__r.CompensationTotalShiftLeader__c <= 0) isLeaderValid = false;
+                if(String.isBlank(vol.VolunteerShift__r.ShiftLeader__r.IBANAccountOwner__c)) isLeaderValid = false;
+                Boolean shouldExportLeader = isLeaderValid && !(isExportForAlreadyPaid == false && vol.VolunteerShift__r.CompensationAndExpensesPayed__c == true);
+                if(shouldExportLeader == true){
+                    String safeShiftName = newString(vol.VolunteerShift__r.Name);
+                    String finalShiftName = System.Label.PrefixForShiftLeaders + safeShiftName;
+                    String shiftLeaderXml = addCommonBlocksToXML(vol.VolunteerShift__r.Id, vol.VolunteerShift__r.CompensationTotalShiftLeader__c, vol.VolunteerShift__r.ShiftLeader__r.IBANAccountOwner__c, vol.VolunteerShift__r.ShiftLeader__r.IBAN__c, finalShiftName);
                     currentScopeXml.add(shiftLeaderXml);
                 }
-                if(shift.ShiftLeader__c != null && !processedContacts.contains(shift.ShiftLeader__c)) {
-                    processedContacts.add(shift.ShiftLeader__c);
+                if(vol.VolunteerShift__r.ShiftLeader__c != null){
                     totalCount += 1;
                 }
-                if(toggleFirst == true){
-                    shift.CompensationAndExpensesPayed__c = true;
-                    updatedShifts.add(shift);
+                if(isCompensationAndExpensesStatusChanged == true){
+                    updatedShifts.add(new VolunteerShift__c(
+                        Id = currentShiftLeaderId,
+                        CompensationAndExpensesPayed__c = true
+                    ));
                 }
-                if(shift.DefaultCompensation__c != null && shift.IndividualCompensationShiftLeader__c > 0){
-                    totalCompensations += shift.CompensationTotalShiftLeader__c;
-                }
+                totalCompensations += vol.VolunteerShift__r.CompensationTotalShiftLeader__c;
 
-                List<Volunteer__c> volunteers = shiftToVolunteersMap.get(shift.Id);
-                if(volunteers != null) {
-                    for(Volunteer__c vol : volunteers) {
-                        if(toggleSecond == false && vol.CompensationAndExpensesPayed__c == true) continue;
-                        if(vol.Contact__c != null) {
-                            totalCount += 1;
-                        }
-                        if(toggleFirst == true){
-                            vol.CompensationAndExpensesPayed__c = true;
-                            updatedVolunteers.add(vol);
-                        }
-                        if (!processedContacts.contains(vol.Contact__c)) {
-                            processedContacts.add(vol.Contact__c);
-                            totalCount += 1;
-                        }
-                        totalCompensations += vol.IndividualCompensationTotal__c;
-                        String finalVolName = System.Label.PrefixForVolunteers + ' ' + vol.Name;
-                        String volunteerXml = addCommonBlocksToXML(vol.Name, vol.IndividualCompensationTotal__c, vol.Contact__r.IBANAccountOwner__c, vol.Contact__r.IBAN__c, finalVolName);
-                        currentScopeXml.add(volunteerXml);
+                Boolean isVolunteerValid = isLeaderValid;
+                if(isExportForAlreadyPaid == false && vol.CompensationAndExpensesPayed__c == true) isVolunteerValid = false;
+                if(isCompensationAndExpensesStatusChanged == true){
+                    vol.CompensationAndExpensesPayed__c = true;
+                    updatedVolunteers.add(vol);
+                }
+                if(isVolunteerValid == true){
+                    totalCount += 1;
+                    totalCompensations += vol.IndividualCompensationTotal__c;
+                    String safeVolName = newString(vol.VolunteerShift__r.Name);
+                    safeVolName = safeVolName.deleteWhitespace();
+                    String finalVolName = System.Label.PrefixForVolunteers + safeVolName;
+                    String volunteerXml = addCommonBlocksToXML(vol.Name, vol.IndividualCompensationTotal__c, vol.Contact__r.IBANAccountOwner__c, vol.Contact__r.IBAN__c, finalVolName);
+                    currentScopeXml.add(volunteerXml);
                     }
                 }
+            //}
+            if(!currentScopeXml.isEmpty()){
+                globalXmlChunks.add(String.join(currentScopeXml, ''));
             }
-        //}
-        if(!currentScopeXml.isEmpty()){
-            globalXmlChunks.add(String.join(currentScopeXml, ''));
+            if(!updatedShifts.isEmpty()){
+                update updatedShifts;
+            }
+            if(!updatedVolunteers.isEmpty()){
+                update updatedVolunteers;
+            }
+        }catch(Exception e){
+            System.debug(System.Label.GenerationErrorLabel + e.getMessage());
         }
-        if(!updatedVolunteers.isEmpty()){
-            update updatedVolunteers;
-        }
-        if(!updatedShifts.isEmpty()){
-            update updatedShifts;
-        }
-        }catch(Exception e){ 
-            System.debug('Background generation error: ' + e.getMessage());
-        }    
     }
 
     public void finish(Database.BatchableContext bc){
@@ -140,9 +128,7 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
         dom.XmlNode grpHdrNode = firstNode.addChildElement('GrpHdr', mainNs, '');
         grpHdrNode.addChildElement('MsgId', mainNs, '').addTextNode(currentEventId + '_' + Datetime.now().format('HHmmss'));
         grpHdrNode.addChildElement('CreDtTm', mainNs, '').addTextNode(Datetime.now().format('yyyyMMdd'));
-
         grpHdrNode.addChildElement('NbOfTxs', mainNs, '').addTextNode(String.valueOf(this.totalCount));
-
         grpHdrNode.addChildElement('CtrlSum', mainNs, '').addTextNode(String.valueOf(this.totalCompensations));
         dom.XmlNode initgPty = grpHdrNode.addChildElement('InitgPty', mainNs, '');
         initgPty.addChildElement('Nm', mainNs, '').addTextNode('Company Name');
@@ -168,12 +154,9 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
 
         pmtInf.addTextNode('Manual_String');
 
-        String baseXmlString = doc.toXmlString(); 
-
+        String baseXmlString = doc.toXmlString();
         String allPeople = String.join(globalXmlChunks, '');
         String finalXmlDocument = baseXmlString.replace('Manual_String', allPeople);
-
-        globalXmlChunks.clear();
 
         ContentVersion cv = new ContentVersion();
         cv.Title = 'Export_Event_' + '_' + Datetime.now().format('yyyyMMdd');
@@ -184,10 +167,19 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
         if(!outputFiles.isEmpty()){
             insert outputFiles;
         }
+
+        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+        mail.setTargetObjectId(UserInfo.getUserId());
+        mail.setSaveAsActivity(false);
+        mail.setSubject(System.Label.EmailSubjectLabel);
+        String fileUrl = URL.getSalesforceBaseUrl().toExternalForm() + '/' + cv.Id;
+        String formattedBody = System.Label.EmailBodyLabel.replace('{0}', fileUrl);
+        mail.setPlainTextBody(formattedBody);
+        Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ mail });
     }
 
     private static String addCommonBlocksToXML(String value, Decimal compensation, String IBANAccount, String iban, String name){
-        String xmlNode = 
+        String xmlNode =
         '<CdtTrfTxInf>' +
             '<PmtId>' +
                 '<EndToEndId>' + value + '</EndToEndId>' +
@@ -207,9 +199,9 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                 '<Ustrd>' + name + '</Ustrd>' +
             '</RmtInf>' +
         '</CdtTrfTxInf>';
-    return xmlNode;
-}
-        
+        return xmlNode;
+    }
+
     private static String newString(String input) {
         if(String.isBlank(input)) return input;
         List<Char_Replacement__mdt> characters = Char_Replacement__mdt.getAll().values();
@@ -218,7 +210,7 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
             if(charReplace.Source__c != null){
                 String replacement = charReplace.Target_character__c != null ? charReplace.Target_character__c : '';
                 cleanText = cleanText.replace(charReplace.Source__c, replacement);
-            } 
+            }
         }
     return cleanText;
     }
