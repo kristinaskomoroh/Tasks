@@ -7,6 +7,7 @@ public with sharing class XMLGenerator {
     public class FlowOutput {
         @InvocableVariable public String message;
         @InvocableVariable public Boolean isBatchNeeded = false;
+        @InvocableVariable public Id jobId;
     }
 
     @InvocableMethod
@@ -28,15 +29,23 @@ public with sharing class XMLGenerator {
                                       AND ShiftLeader__r.IBANAccountOwner__c != null
                                       LIMIT 50000
         ]){
-            if(String.isBlank(shift.ShiftLeader__r.IBAN__c)) isLeaderValid = false;
-            if(isExportForAlreadyPaid == false && shift.CompensationAndExpensesPayed__c == true) isLeaderValid = false;
-            if(isLeaderValid) {
+            if(String.isBlank(shift.ShiftLeader__r.IBAN__c)){
+                isLeaderValid = false;
+            }
+            if(isExportForAlreadyPaid == false && shift.CompensationAndExpensesPayed__c == true){
+                isLeaderValid = false;
+            }
+            if(isLeaderValid == true) {
                 output.isBatchNeeded = true;
                 break;
             }
         }
-        if(output.isBatchNeeded == true) Database.executeBatch(new BulkXmlGenerator(inputs), 200);
-        else output.message = System.Label.EventErrorLabel;
+        if(output.isBatchNeeded == true) {
+            output.jobId = Database.executeBatch(new BulkXmlGenerator(inputs), 200);
+        }
+        else {
+            output.message = System.Label.EventErrorLabel;
+        }
         results.add(output);
         return results;
     }
