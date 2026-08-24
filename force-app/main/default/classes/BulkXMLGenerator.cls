@@ -11,8 +11,6 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
     private List<Volunteer__c> updatedVolunteers = new List<Volunteer__c>();
 
     private Set<Id> processedGroupIds = new Set<Id>();
-    private Id currentGroupId = null;
-    private Boolean isCurrentGroupValid = false;
 
     private static Map<String, String> replacements = new Map<String, String>();
     static{
@@ -64,16 +62,15 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
             }
             //for(Integer i = 0; i < 10; i++){
                 for(Volunteer__c vol: scope){
-                    if (vol.VolunteerShift__c != currentGroupId){
-                        currentGroupId = vol.VolunteerShift__c;
-                        isCurrentGroupValid = true;
-                        processedGroupIds.add(currentGroupId);
+                    if(!processedGroupIds.contains(vol.VolunteerShift__c)) {
+                        processedGroupIds.add(vol.VolunteerShift__c);
+                        Boolean isCurrentGroupValid = true;
                         if(String.isBlank(vol.VolunteerShift__r.ShiftLeader__r.IBAN__c) ||
-                                          vol.VolunteerShift__r.IsIBANPayment__c == false ||
-                                          vol.VolunteerShift__r.CompensationTotalShiftLeader__c == null ||
-                                          vol.VolunteerShift__r.CompensationTotalShiftLeader__c <= 0 ||
-                                          String.isBlank(vol.VolunteerShift__r.ShiftLeader__r.IBANAccountOwner__c)
-                                          ) {
+                                        vol.VolunteerShift__r.IsIBANPayment__c == false ||
+                                        vol.VolunteerShift__r.CompensationTotalShiftLeader__c == null ||
+                                        vol.VolunteerShift__r.CompensationTotalShiftLeader__c <= 0 ||
+                                        String.isBlank(vol.VolunteerShift__r.ShiftLeader__r.IBANAccountOwner__c)
+                                        ) {
                             isCurrentGroupValid = false;
                         }
                         if(isCompensationAndExpensesStatusChanged == true){
@@ -81,14 +78,15 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                             updatedShifts.add(vol.VolunteerShift__r);
                         }
 
-                        Boolean shouldExportLeader = isCurrentGroupValid == true && !(isExportForAlreadyPaid == false
+                        Boolean shouldExportLeader = isCurrentGroupValid == true
+                                                                        && !(isExportForAlreadyPaid == false
                                                                         && vol.VolunteerShift__r.CompensationAndExpensesPayed__c == true
                                                                         );
                         if(shouldExportLeader == true){
                             String safeShiftName = newString(vol.VolunteerShift__r.Name);
                             String finalShiftName = System.Label.PrefixForShiftLeaders + safeShiftName;
                             String shiftLeaderXml = addCommonBlocksToXML(
-                                currentGroupId,
+                                vol.VolunteerShift__c,
                                 vol.VolunteerShift__r.CompensationTotalShiftLeader__c,
                                 vol.VolunteerShift__r.ShiftLeader__r.IBANAccountOwner__c,
                                 vol.VolunteerShift__r.ShiftLeader__r.IBAN__c,
@@ -100,21 +98,18 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                             totalCompensations += vol.VolunteerShift__r.CompensationTotalShiftLeader__c;
                             globalXmlChunks.add(shiftLeaderXml);
                         }
-                    } else {
-                        isCurrentGroupValid = false;
                     }
-
-                    if(isCurrentGroupValid == false) {
-                        continue;
-                    }
-
                     Boolean isVolunteerValid = true;
                     if(isExportForAlreadyPaid == false && vol.CompensationAndExpensesPayed__c == true) {
                         isVolunteerValid = false;
                     }
-                    if(vol.IndividualCompensationTotal__c == null || vol.IndividualCompensationTotal__c <= 0 ||
-                    String.isBlank(vol.Contact__r.IBAN__c) || String.isBlank(vol.Contact__r.IBANAccountOwner__c) ||
-                    vol.Status__c != DataHelper.VOLUNTEER_STATUS_PARTICIPATION){
+                    if(vol.IndividualCompensationTotal__c == null ||
+                       vol.IndividualCompensationTotal__c <= 0 ||
+                        String.isBlank(vol.Contact__r.IBAN__c) ||
+                        String.isBlank(vol.Contact__r.IBANAccountOwner__c) ||
+                        vol.Status__c != DataHelper.VOLUNTEER_STATUS_PARTICIPATION ||
+                        vol.VolunteerShift__r.IsIBANPayment__c == false)
+                    {
                         isVolunteerValid = false;
                     }
                     if(isCompensationAndExpensesStatusChanged == true){
