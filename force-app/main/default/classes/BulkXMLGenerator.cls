@@ -86,18 +86,10 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                                         ) {
                             isCurrentGroupValid = false;
                         }
-                        // if(isCompensationAndExpensesStatusChanged == true){
-                        //     vol.VolunteerShift__r.CompensationAndExpensesPayed__c = true;
-                        //     updatedShifts.add(vol.VolunteerShift__r);
-                        // }
                         Boolean shouldExportLeader = isCurrentGroupValid == true
                                                                         && !(isExportForAlreadyPaid == false
                                                                         && vol.VolunteerShift__r.CompensationAndExpensesPayed__c == true
                                                                         );
-                        System.debug('--- ПРОВЕРКА ЛОГИКИ shouldExportLeader ---');
-                        System.debug('1. isCurrentGroupValid: ' + isCurrentGroupValid);
-                        System.debug('2. isExportForAlreadyPaid: ' + isExportForAlreadyPaid);
-                        System.debug('3. Галочка Payed__c у Смены: ' + vol.VolunteerShift__r.CompensationAndExpensesPayed__c);
                         if(shouldExportLeader == true){
                             String safeShiftName = newString(vol.VolunteerShift__r.Name);
                             String finalShiftName = System.Label.PrefixForShiftLeaders + safeShiftName;
