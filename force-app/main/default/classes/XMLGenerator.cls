@@ -17,7 +17,6 @@ public with sharing class XMLGenerator {
         Id eventId = inputs[0].eventId;
         Boolean isCompensationAndExpensesStatusChanged = inputs[0].isCompensationAndExpensesStatusChanged;
         Boolean isExportForAlreadyPaid = inputs[0].isExportForAlreadyPaid;
-        Boolean isLeaderValid = true;
         for(VolunteerShift__c shift: [SELECT Id,
                                              ShiftLeader__r.IBAN__c,
                                              CompensationAndExpensesPayed__c
@@ -29,6 +28,7 @@ public with sharing class XMLGenerator {
                                       AND ShiftLeader__r.IBANAccountOwner__c != null
                                       LIMIT 50000
         ]){
+            Boolean isLeaderValid = true;
             if(String.isBlank(shift.ShiftLeader__r.IBAN__c)){
                 isLeaderValid = false;
             }
@@ -43,10 +43,38 @@ public with sharing class XMLGenerator {
         if(output.isBatchNeeded == true) {
             output.jobId = Database.executeBatch(new BulkXmlGenerator(inputs), 200);
         }
-        else {
-            output.message = System.Label.EventErrorLabel;
+        if(output.isBatchNeeded == false) {
+            for(Volunteer__c volunteer:[SELECT Id,
+                                             Contact__r.IBAN__c,
+                                             CompensationAndExpensesPayed__c
+                                      FROM Volunteer__c
+                                      WHERE VolunteerShift__r.Event__c =: eventId
+                                      AND VolunteerShift__r.IsIBANPayment__c = true
+                                      AND IndividualCompensationTotal__c != null
+                                      AND Contact__r.IBANAccountOwner__c != null
+                                      AND Status__c = :DataHelper.VOLUNTEER_STATUS_PARTICIPATION
+                                      LIMIT 50000
+        ]){
+            Boolean isVolunteerValid = true;
+            if(String.isBlank(volunteer.Contact__r.IBAN__c)){
+                isVolunteerValid = false;
+            }
+            if(isExportForAlreadyPaid == false && volunteer.CompensationAndExpensesPayed__c == true){
+                isVolunteerValid = false;
+            }
+            if(isVolunteerValid == true) {
+                output.isBatchNeeded = true;
+                break;
+            }
         }
-        results.add(output);
-        return results;
+    }
+    if(output.isBatchNeeded == true) {
+        output.jobId = Database.executeBatch(new BulkXmlGenerator(inputs), 200);
+    }
+    else{
+        output.message = System.Label.EventErrorLabel;
+    }
+    results.add(output);
+    return results;
     }
 }
