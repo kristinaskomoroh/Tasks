@@ -7,9 +7,6 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
     private Integer totalCount = 0;
     private Decimal totalCompensations = 0;
 
-    private List<VolunteerShift__c> updatedShifts = new List<VolunteerShift__c>();
-    private List<Volunteer__c> updatedVolunteers = new List<Volunteer__c>();
-
     private Set<Id> processedGroupIds = new Set<Id>();
 
     private static Map<String, String> replacements = new Map<String, String>();
@@ -20,6 +17,19 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                 String target = charReplace.Target_character__c != null ? charReplace.Target_character__c : '';
                 replacements.put(source, target);
             }
+        }
+    }
+
+    private class XmlDraft{
+        Id recordId;
+        String xmlText;
+        Decimal amount;
+        Integer countToAdd;
+        XmlDraft(Id recordId, String xmlText, Decimal amount, Integer countToAdd){
+            this.recordId = recordId;
+            this.xmlText = xmlText;
+            this.amount = amount;
+            this.countToAdd = countToAdd;
         }
     }
 
@@ -54,6 +64,9 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
 
     public void execute(Database.BatchableContext bc, List<Volunteer__c> scope){
         try{
+            List<XmlDraft> tempDrafts = new List<XmlDraft>();
+            List<VolunteerShift__c> updatedShifts = new List<VolunteerShift__c>();
+            List<Volunteer__c> updatedVolunteers = new List<Volunteer__c>();
             Boolean isCompensationAndExpensesStatusChanged = false;
             Boolean isExportForAlreadyPaid = false;
             if(this.inputs != null) {
@@ -73,15 +86,18 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                                         ) {
                             isCurrentGroupValid = false;
                         }
-                        if(isCompensationAndExpensesStatusChanged == true){
-                            vol.VolunteerShift__r.CompensationAndExpensesPayed__c = true;
-                            updatedShifts.add(vol.VolunteerShift__r);
-                        }
-
+                        // if(isCompensationAndExpensesStatusChanged == true){
+                        //     vol.VolunteerShift__r.CompensationAndExpensesPayed__c = true;
+                        //     updatedShifts.add(vol.VolunteerShift__r);
+                        // }
                         Boolean shouldExportLeader = isCurrentGroupValid == true
                                                                         && !(isExportForAlreadyPaid == false
                                                                         && vol.VolunteerShift__r.CompensationAndExpensesPayed__c == true
                                                                         );
+                        System.debug('--- ПРОВЕРКА ЛОГИКИ shouldExportLeader ---');
+                        System.debug('1. isCurrentGroupValid: ' + isCurrentGroupValid);
+                        System.debug('2. isExportForAlreadyPaid: ' + isExportForAlreadyPaid);
+                        System.debug('3. Галочка Payed__c у Смены: ' + vol.VolunteerShift__r.CompensationAndExpensesPayed__c);
                         if(shouldExportLeader == true){
                             String safeShiftName = newString(vol.VolunteerShift__r.Name);
                             String finalShiftName = System.Label.PrefixForShiftLeaders + safeShiftName;
@@ -92,11 +108,15 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                                 vol.VolunteerShift__r.ShiftLeader__r.IBAN__c,
                                 finalShiftName
                             );
-                            if(vol.VolunteerShift__r.ShiftLeader__c != null){
-                                totalCount += 1;
+                            Integer countLeader = (vol.VolunteerShift__r.ShiftLeader__c != null) ? 1 : 0;
+                            tempDrafts.add(new XmlDraft(vol.VolunteerShift__c, shiftLeaderXml,
+                                                        vol.VolunteerShift__r.CompensationTotalShiftLeader__c, countLeader));
+                            if(isCompensationAndExpensesStatusChanged == true){
+                                updatedShifts.add(new VolunteerShift__c(
+                                    Id = vol.VolunteerShift__c,
+                                    CompensationAndExpensesPayed__c = true
+                                ));
                             }
-                            totalCompensations += vol.VolunteerShift__r.CompensationTotalShiftLeader__c;
-                            globalXmlChunks.add(shiftLeaderXml);
                         }
                     }
                     Boolean isVolunteerValid = true;
@@ -112,13 +132,7 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                     {
                         isVolunteerValid = false;
                     }
-                    if(isCompensationAndExpensesStatusChanged == true){
-                        vol.CompensationAndExpensesPayed__c = true;
-                        updatedVolunteers.add(vol);
-                    }
                     if(isVolunteerValid == true){
-                        totalCount += 1;
-                        totalCompensations += vol.IndividualCompensationTotal__c;
                         String safeVolName = newString(vol.VolunteerShift__r.Name);
                         String finalVolName = System.Label.PrefixForVolunteers + safeVolName;
                         String volunteerXml = addCommonBlocksToXML(
@@ -128,15 +142,29 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                             vol.Contact__r.IBAN__c,
                             finalVolName
                         );
-                        globalXmlChunks.add(volunteerXml);
+                        tempDrafts.add(new XmlDraft(vol.Id, volunteerXml, vol.IndividualCompensationTotal__c, 1));
+                        if(isCompensationAndExpensesStatusChanged == true){
+                            updatedVolunteers.add(new Volunteer__c(
+                                Id = vol.Id,
+                                CompensationAndExpensesPayed__c = true
+                            ));
+                        }
                     }
                 }
             //}
-            if(!updatedShifts.isEmpty()){
-                update updatedShifts;
-            }
-            if(!updatedVolunteers.isEmpty()){
-                update updatedVolunteers;
+            Set<Id> failedRecordIds = new Set<Id>();
+            failedRecordIds.addAll(updateAndLog(updatedShifts, 'VolunteerShift__c'));
+            failedRecordIds.addAll(updateAndLog(updatedVolunteers, 'Volunteer__c'));
+            for(XmlDraft draft: tempDrafts){
+                if(!failedRecordIds.contains(draft.recordId)){
+                    globalXmlChunks.add(draft.xmlText);
+                    if (draft.amount != null) {
+                        totalCompensations += draft.amount;
+                    }
+                    if (draft.countToAdd != null) {
+                        totalCount += draft.countToAdd;
+                    }
+                }
             }
         }catch(Exception e){
             System.debug(System.Label.GenerationErrorLabel + e.getMessage());
@@ -167,11 +195,9 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                 AND CompensationTotalShiftLeader__c != null
                 AND ShiftLeader__r.IBANAccountOwner__c != null
             ];
+            List<XmlDraft> tempDrafts = new List<XmlDraft>();
+            List<VolunteerShift__c> updatedShifts = new List<VolunteerShift__c>();
             for (VolunteerShift__c emptyShift : emptyShifts) {
-                if(isCompensationAndExpensesStatusChanged == true){
-                    emptyShift.CompensationAndExpensesPayed__c = true;
-                    updatedShifts.add(emptyShift);
-                }
                 if (String.isNotBlank(emptyShift.ShiftLeader__r.IBAN__c) &&
                                     !(isExportForAlreadyPaid == false &&
                                     emptyShift.CompensationAndExpensesPayed__c == true)){
@@ -184,15 +210,57 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                         emptyShift.ShiftLeader__r.IBAN__c,
                         finalShiftName
                     );
-                    globalXmlChunks.add(emptyShiftXml);
-                    if(emptyShift.ShiftLeader__c != null){
-                        totalCount += 1;
+                    Integer countEmptyShift = (emptyShift.ShiftLeader__c != null) ? 1: 0;
+                    tempDrafts.add(new XmlDraft(emptyShift.Id, emptyShiftXml, emptyShift.CompensationTotalShiftLeader__c, countEmptyShift));
+                    if(isCompensationAndExpensesStatusChanged == true){
+                        updatedShifts.add(new VolunteerShift__c(
+                            Id = emptyShift.Id,
+                            CompensationAndExpensesPayed__c = true
+                        ));
                     }
-                    totalCompensations += emptyShift.CompensationTotalShiftLeader__c;
                 }
             }
-        }catch(Exception e){
-            System.debug(System.Label.GenerationErrorLabel + e.getMessage());
+           Set<Id> failedRecordIds = updateAndLog(updatedShifts, 'VolunteerShift__c');
+            for (XmlDraft draft : tempDrafts) {
+                if(!failedRecordIds.contains(draft.recordId)) {
+                    globalXmlChunks.add(draft.xmlText);
+                }
+                if (draft.amount != null) {
+                    totalCompensations += draft.amount;
+                }
+                if (draft.countToAdd != null) {
+                    totalCount += draft.countToAdd;
+                }
+            }
+            DOM.Document finalDoc = generateDOMDocument(inputs);
+            String baseXmlString = finalDoc.toXmlString();
+            String allPeople = String.join(globalXmlChunks, '');
+            String finalXmlDocument = baseXmlString.replace('Manual_String', allPeople);
+
+            ContentVersion cv = new ContentVersion();
+            cv.Title = 'Export_Event_' + '_' + Datetime.now().format('yyyyMMdd');
+            cv.PathOnClient = 'Export_Event.xml';
+            cv.VersionData = Blob.valueOf(finalXmlDocument);
+            cv.Description = String.valueOf(this.totalCount) + '/' + String.valueOf(this.totalCompensations);
+            cv.FirstPublishLocationId = currentEventId;
+            outputFiles.add(cv);
+            if(!outputFiles.isEmpty()){
+                insert outputFiles;
+            }
+            cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
+            Id myContentDocumentId = cv.ContentDocumentId;
+
+            sendEmailMessage(myContentDocumentId);
+            }catch(Exception e){
+                System.debug(System.Label.GenerationErrorLabel + e.getMessage());
+            }
+
+    }
+
+    private DOM.Document generateDOMDocument(List<XMLGenerator.FlowInput> inputs){
+        Id currentEventId;
+        if(inputs != null) {
+            currentEventId = inputs[0].eventId;
         }
         DOM.Document doc = new DOM.Document();
         Export_Config__mdt config = Export_Config__mdt.getInstance('SEPA_Payments');
@@ -209,16 +277,16 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
         dom.XmlNode grpHdrNode = firstNode.addChildElement('GrpHdr', mainNs, '');
         grpHdrNode.addChildElement('MsgId', mainNs, '').addTextNode(currentEventId + Datetime.now().format('HHmmss'));
         grpHdrNode.addChildElement('CreDtTm', mainNs, '').addTextNode(Datetime.now().format('yyyyMMdd'));
-        grpHdrNode.addChildElement('NbOfTxs', mainNs, '').addTextNode(String.valueOf(this.totalCount));
-        grpHdrNode.addChildElement('CtrlSum', mainNs, '').addTextNode(String.valueOf(this.totalCompensations));
+        grpHdrNode.addChildElement('NbOfTxs', mainNs, '').addTextNode(String.valueOf(totalCount));
+        grpHdrNode.addChildElement('CtrlSum', mainNs, '').addTextNode(String.valueOf(totalCompensations));
         dom.XmlNode initgPty = grpHdrNode.addChildElement('InitgPty', mainNs, '');
         initgPty.addChildElement('Nm', mainNs, '').addTextNode('Company Name');
         dom.XmlNode pmtInf = firstNode.addChildElement('PmtInf', mainNs, '');
         pmtInf.addChildElement('PmtInfId', mainNs, '').addTextNode(currentEventId + Datetime.now().format('HHmmss'));
         pmtInf.addChildElement('PmtMtd', mainNs, '').addTextNode('TRF');
         pmtInf.addChildElement('BtchBookg', mainNs, '').addTextNode('true');
-        pmtInf.addChildElement('NbOfTxs', mainNs, '').addTextNode(String.valueOf(this.totalCount));
-        pmtInf.addChildElement('CtrlSum', mainNs, '').addTextNode(String.valueOf(this.totalCompensations));
+        pmtInf.addChildElement('NbOfTxs', mainNs, '').addTextNode(String.valueOf(totalCount));
+        pmtInf.addChildElement('CtrlSum', mainNs, '').addTextNode(String.valueOf(totalCompensations));
         dom.XmlNode pmtTpInf = pmtInf.addChildElement('PmtTpInf', mainNs, '');
         dom.XmlNode svcLvl = pmtTpInf.addChildElement('SvcLvl', mainNs, '');
         svcLvl.addChildElement('Cd', mainNs, '').addTextNode('SEPA');
@@ -235,23 +303,10 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
 
         pmtInf.addTextNode('Manual_String');
 
-        String baseXmlString = doc.toXmlString();
-        String allPeople = String.join(globalXmlChunks, '');
-        String finalXmlDocument = baseXmlString.replace('Manual_String', allPeople);
+        return doc;
+    }
 
-        ContentVersion cv = new ContentVersion();
-        cv.Title = 'Export_Event_' + '_' + Datetime.now().format('yyyyMMdd');
-        cv.PathOnClient = 'Export_Event.xml';
-        cv.VersionData = Blob.valueOf(finalXmlDocument);
-        cv.Description = String.valueOf(this.totalCount) + '/' + String.valueOf(this.totalCompensations);
-        cv.FirstPublishLocationId = currentEventId;
-        outputFiles.add(cv);
-        if(!outputFiles.isEmpty()){
-            insert outputFiles;
-        }
-        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1];
-        Id myContentDocumentId = cv.ContentDocumentId;
-
+    private static void sendEmailMessage(Id myContentDocumentId){
         Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
         mail.setTargetObjectId(UserInfo.getUserId());
         mail.setSaveAsActivity(false);
@@ -259,7 +314,7 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
         String fileUrl = URL.getOrgDomainUrl().toExternalForm() + '/lightning/r/ContentDocument/' + myContentDocumentId + '/view';
         String formattedBody = System.Label.EmailBodyLabel.replace('{0}', fileUrl);
         mail.setPlainTextBody(formattedBody);
-        Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ mail });
+        Messaging.SendEmailResult[] results = Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ mail });
     }
 
     private static String addCommonBlocksToXML(String value, Decimal compensation, String IBANAccount, String iban, String name){
@@ -294,4 +349,28 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
         }
     return cleanText;
     }
+
+    private Set<Id> updateAndLog(List<sObject> records, String objectName){
+        Set<Id> failedIds = new Set<Id>();
+        List<Error_Log__c> logsToInsert = new List<Error_Log__c>();
+        Database.SaveResult[] saveResults = Database.update(records, false);
+        for(Integer i = 0; i < saveResults.size(); i++){
+            if(!saveResults[i].isSuccess()){
+                failedIds.add(records[i].Id);
+                Database.Error err = saveResults[i].getErrors()[0];
+                logsToInsert.add(new Error_Log__c(
+                    Process_Name__c = 'BulkXMLGenerator',
+                    Record_Id__c = records[i].Id,
+                    Object_Name__c = objectName,
+                    Error_Message__c = err.getMessage(),
+                    Status_Code__c = String.valueOf(err.getStatusCode())
+                ));
+            }
+            if (!logsToInsert.isEmpty()) {
+                insert logsToInsert;
+            }
+        }
+        return failedIds;
+    }
 }
+
