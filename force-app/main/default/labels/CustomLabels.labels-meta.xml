@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>EmailBodyLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>EmailBodyLabel</shortDescription>
+        <value>Payment processing for the event has been successfully completed. All volunteers and shift leaders have been processed.
+
+        You can open it via this link: {0} or you can go to the “Related” tab for the relevant event and view the “Files” list, where the completed document will be placed.
+
+        Have a great day!</value>
+    </labels>
+    <labels>
+        <fullName>EmailLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>EmailLabel</shortDescription>
+        <value>Email</value>
+    </labels>
+    <labels>
+        <fullName>EmailSubjectLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>EmailSubjectLabel</shortDescription>
+        <value>📄 Your bank file (XML) is ready for download</value>
+    </labels>
+    <labels>
+        <fullName>ErrorLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ErrorLabel</shortDescription>
+        <value>Error</value>
+    </labels>
+    <labels>
+        <fullName>ErrorMessageLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ErrorMessageLabel</shortDescription>
+        <value>An error occurred</value>
+    </labels>
+    <labels>
+        <fullName>EventErrorLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>EventErrorLabel</shortDescription>
+        <value>No shifts or volunteers meeting the criteria were found for this event. The file cannot be generated.</value>
+    </labels>
+    <labels>
+        <fullName>GenerateFileErrorLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>GenerateFileErrorLabel</shortDescription>
+        <value>An error occurred during generation. Errors:</value>
+    </labels>
+    <labels>
+        <fullName>GenerateXMLFileLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>GenerateXMLFileLabel</shortDescription>
+        <value>Generating an XML File...</value>
+    </labels>
+    <labels>
+        <fullName>GenerationErrorLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>GenerationErrorLabel</shortDescription>
+        <value>Background generation error:</value>
+    </labels>
+    <labels>
+        <fullName>PackagesProcessedLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>PackagesProcessedLabel</shortDescription>
+        <value>Packages processed:</value>
+    </labels>
+    <labels>
+        <fullName>PrefixForShiftLeaders</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>PrefixForShiftLeaders</shortDescription>
+        <value>ShiftLeader</value>
+    </labels>
+    <labels>
+        <fullName>PrefixForVolunteers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>PrefixForVolunteers</shortDescription>
+        <value>Volunteer</value>
+    </labels>
+    <labels>
+        <fullName>PrevLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>PrevLabel</shortDescription>
+        <value>Prev</value>
+    </labels>
+    <labels>
+        <fullName>SaveLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SaveLabel</shortDescription>
+        <value>Save</value>
+    </labels>
+    <labels>
+        <fullName>StatusAbortedLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>StatusAbortedLabel</shortDescription>
+        <value>Aborted</value>
+    </labels>
+    <labels>
+        <fullName>StatusCompletedLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>StatusCompletedLabel</shortDescription>
+        <value>Completed</value>
+    </labels>
+    <labels>
+        <fullName>StatusFailedLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>StatusFailedLabel</shortDescription>
+        <value>Failed</value>
+    </labels>
+    <labels>
+        <fullName>StatusLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>StatusLabel</shortDescription>
+        <value>Status:</value>
+    </labels>
+    <labels>
+        <fullName>SuccessLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SuccessLabel</shortDescription>
+        <value>Success</value>
+    </labels>
+</CustomLabels>
