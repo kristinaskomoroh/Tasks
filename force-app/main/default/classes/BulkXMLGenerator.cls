@@ -178,7 +178,8 @@ public with sharing class BulkXMLGenerator implements Database.Batchable<SObject
                     Name,
                     CompensationTotalShiftLeader__c,
                     ShiftLeader__r.IBAN__c,
-                    ShiftLeader__r.IBANAccountOwner__c
+                    ShiftLeader__r.IBANAccountOwner__c,
+                    CompensationAndExpensesPayed__c
                 FROM VolunteerShift__c
                 WHERE Event__c = :currentEventId
                 AND Id NOT IN :processedGroupIds
